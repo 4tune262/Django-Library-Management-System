@@ -1,0 +1,1016 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+
+
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    .game-bg {
+        background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1920') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Barlow', sans-serif;
+        color: #fff;
+        min-height: 100vh;
+        user-select: none;
+        overflow-x: hidden;
+    }
+
+    .game-header {
+        background: rgba(18, 24, 32, 0.85);
+        border-bottom: 2px solid #5ce1e6;
+        padding: 15px 40px;
+    }
+
+    .hud-title {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        color: #5ce1e6;
+        text-transform: uppercase;
+    }
+    .hud-title span { color: #fff; }
+    .hud-text { font-weight: 800; color: #5ce1e6; font-size: 22px; }
+    .hud-warn { font-weight: 800; color: #ff4d4d; font-size: 22px; }
+    .hud-gold { font-weight: 800; color: #ffcc00; font-size: 22px; }
+
+    .game-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    /* Gara Xe bên cạnh */
+    .garage-panel {
+        background: rgba(26, 29, 36, 0.9);
+        border: 2px solid #3c414c;
+        border-radius: 12px;
+        padding: 20px;
+        width: 280px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .garage-title {
+        font-size: 16px;
+        font-weight: 900;
+        color: #5ce1e6;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        text-align: center;
+        border-bottom: 1px solid #3c414c;
+        padding-bottom: 8px;
+    }
+    .skin-card {
+        background: #22262f;
+        border: 2px solid #323742;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+    }
+    .skin-card:hover { border-color: #5ce1e6; }
+    .skin-card.active { border-color: #ffcc00; background: rgba(92, 225, 230, 0.1); }
+    .skin-card img { width: 40px; height: 40px; object-fit: contain; }
+    .skin-info b { font-size: 14px; display: block; }
+    .skin-info small { color: #8fa0b5; font-size: 12px; }
+
+    .canvas-wrapper {
+        border: 3px solid #5ce1e6;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(92, 225, 230, 0.5);
+        background: rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+    }
+
+    canvas { display: block; }
+
+    .control-panel {
+        background: #252932;
+        border: 3px solid #3c414c;
+        border-radius: 14px;
+        padding: 45px 30px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        width: 320px;
+        height: 420px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .d-pad {
+        position: relative;
+        width: 200px;
+        height: 200px;
+    }
+
+    .d-btn {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+        background: #1a1d24;
+        border: 2px solid #323742;
+        color: #5ce1e6;
+        border-radius: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .d-btn:active { background: #5ce1e6; color: #1a1d24; }
+
+    .btn-up    { top: 0px; left: 72px; }
+    .btn-left  { top: 72px; left: 0px; }
+    .btn-right { top: 72px; right: 0px; }
+    .btn-down  { bottom: 0px; left: 72px; }
+
+    .btn-nitro {
+        position: absolute;
+        top: 66px;
+        left: 66px;
+        width: 68px;
+        height: 68px;
+        background: radial-gradient(circle at 50% 30%, #ff5252 0%, #b30000 65%, #590000 100%);
+        border: 3px solid #ffcc00;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 900;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .instruction-text {
+        color: #8fa0b5; font-size: 11px; font-weight: 600; text-align: center; line-height: 1.6;
+    }
+
+    .racing-alert-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(10, 14, 20, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0; pointer-events: none;
+        transition: all 0.2s ease;
+    }
+    .racing-alert-overlay.active { opacity: 1; pointer-events: auto; }
+    .racing-alert-box {
+        background: #222733; border: 3px solid #5ce1e6; border-radius: 12px;
+        padding: 40px; text-align: center; max-width: 450px; width: 90%;
+    }
+    .btn-next-stage {
+        background: #5ce1e6; border: none; color: #111; font-weight: 900;
+        padding: 12px 30px; font-size: 14px; border-radius: 4px; cursor: pointer;
+    }
+</style>
+
+<div class="game-bg">
+    <!-- TOP BAR HUD -->
+    <div class="game-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div><h2 class="m-0 hud-title"><i class="fas fa-route text-white me-2"></i> NITRO RACING <span>STEER CONTROL</span></h2></div>
+            <div class="fs-5 fw-bold text-uppercase">STAGE: <span class="hud-text" id="hudLevel">1</span></div>
+            <div class="fs-5 fw-bold text-uppercase">XU: <span class="hud-gold" id="hudCoins">0</span></div>
+            <div class="fs-5 fw-bold text-uppercase">FUEL: <span class="hud-warn" id="hudFuel">30</span></div>
+            <div class="fs-5 fw-bold text-uppercase">NITRO: <span class="hud-text" id="hudNitro">0</span></div>
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="game-container">
+        <!-- GARA ĐỔI XE -->
+        <div class="garage-panel">
+            <div class="garage-title"><i class="fas fa-shopping-cart"></i> Đổi Xe Siêu Cấp</div>
+            <div id="skinContainer">
+                <div class="skin-card active" id="skin-default" onclick="buyOrSelectSkin('default', 0)">
+                    <img src="{% static 'game/img/gt3_car.png' %}">
+                    <div class="skin-info"><b>Mặc định GT3</b><br><small class="text-success">Đang chọn</small></div>
+                </div>
+                <div class="skin-card" id="skin-truck" onclick="buyOrSelectSkin('truck', 30)">
+                    <img src="{% static 'game/img/Metal_Car.png' %}">
+                    <div class="skin-info"><b>Xe Tăng Bọc Thép</b><br><small id="price-truck" class="text-warning">Giá: 30 Xu</small></div>
+                </div>
+                <div class="skin-card" id="skin-f1" onclick="buyOrSelectSkin('f1', 60)">
+                    <img src="{% static 'game/img/F1.png' %}">
+                    <div class="skin-info"><b>Siêu Xe F1 F1</b><br><small id="price-f1" class="text-warning">Giá: 60 Xu</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="mapCanvas" width="600" height="600"></canvas>
+        </div>
+
+        <div class="control-panel">
+            <div class="d-pad">
+                <button class="d-btn btn-up" onclick="changeDirection(0, -1)"><i class="fas fa-chevron-up"></i></button>
+                <button class="d-btn btn-left" onclick="changeDirection(-1, 0)"><i class="fas fa-chevron-left"></i></button>
+                <button class="d-btn btn-right" onclick="changeDirection(1, 0)"><i class="fas fa-chevron-right"></i></button>
+                <button class="d-btn btn-down" onclick="changeDirection(0, 1)"><i class="fas fa-chevron-down"></i></button>
+                <button class="btn-nitro" onclick="activateNitro()"><i class="fas fa-fire"></i><span>NITRO</span></button>
+            </div>
+            <div class="instruction-text">
+                <i class="fas fa-gamepad text-info"></i> <b>ĐIỀU KHIỂN LINH HOẠT:</b> Xe chạy tốc độ vừa phải. Ông có thể bấm nút hướng bất kỳ để bẻ lái né rào và gom xu ngay khi đang đi!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP -->
+<div class="racing-alert-overlay" id="racingAlert">
+    <div class="racing-alert-box">
+        <div class="mb-3" id="alertIcon"><i class="fas fa-trophy fa-3x text-warning"></i></div>
+        <h3 class="text-white mb-2" id="alertTitle" style="font-weight:900;">STAGE CLEAR!</h3>
+        <p class="text-muted mb-4" id="alertMsg"></p>
+        <button class="btn-next-stage" id="alertBtn" onclick="closeAlertAndContinue()">TIẾP TỤC</button>
+    </div>
+</div>
+
+<!-- ASSETS ĐỒNG BỘ -->
+<img id="imgCar" src="{% static 'game/img/gt3_car.png' %}" style="display:none;">
+<img id="imgBarrier" src="{% static 'game/img/barrier.png' %}" style="display:none;">
+<img id="imgTires" src="{% static 'game/img/tires.png' %}" style="display:none;">
+<img id="imgBarrels" src="{% static 'game/img/barrels.png' %}" style="display:none;">
+<img id="imgFinish" src="{% static 'game/img/finish.png' %}" style="display:none;">
+<img id="imgItemFuel" src="{% static 'game/img/fuel.png' %}" style="display:none;">
+<img id="imgItemNitro" src="{% static 'game/img/nitro_item.png' %}" style="display:none;">
+<img id="imgItemCoin" src="{% static 'game/img/coin_item.png' %}" style="display:none;">
+
+<script>
+const canvas = document.getElementById("mapCanvas");
+const ctx = canvas.getContext("2d");
+const gridSize = 60; const cols = 10; const rows = 10;
+
+let currentLevel = 1; const maxLevels = 5;
+let fuel = 30; let nitroAmmo = 0; let coins = 0;
+let isNitroPreparing = false;
+let carGrid = { x: 0, y: 0, angle: 0, dx: 0, dy: 0 };
+let activeMap = [];
+let moveInterval = null;
+
+// Hệ thống Shop Xe
+let purchasedSkins = ['default'];
+let selectedSkin = 'default';
+const skinImages = {
+    'default': "{% static 'game/img/gt3_car.png' %}",
+    'truck': "https://cdn-icons-png.flaticon.com/512/3118/3118274.png",
+    'f1': "https://cdn-icons-png.flaticon.com/512/2807/2807604.png"
+};
+
+function generateSteerMap(level) {
+    let map = Array(rows).fill().map(() => Array(cols).fill(0));
+    map[rows - 1][cols - 1] = 2; // Đích
+
+    let obstacleChance = 0.14 + (level * 0.02);
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if ((r === 0 && c === 0) || (r === rows-1 && c === cols-1)) continue;
+
+            let roll = Math.random();
+            if (roll < obstacleChance) {
+                let obsType = Math.random();
+                if (obsType < 0.4) map[r][c] = 1;
+                else if (obsType < 0.7) map[r][c] = 3;
+                else map[r][c] = 4;
+            } else if (roll < obstacleChance + 0.07) {
+                map[r][c] = 5; // Bình xăng của ông
+            } else if (roll < obstacleChance + 0.11) {
+                map[r][c] = 6; // Nitro của ông
+            } else if (roll < obstacleChance + 0.20) {
+                map[r][c] = 7; // Xu vàng của ông (coin_item.png)
+            }
+        }
+    }
+    return map;
+}
+
+function initLevel(level) {
+    if (moveInterval) clearInterval(moveInterval);
+    moveInterval = null;
+
+    fuel = 40 + level * 2;
+    nitroAmmo = 1;
+    isNitroPreparing = false;
+
+    carGrid.x = 0; carGrid.y = 0; carGrid.angle = 0;
+    carGrid.dx = 0; carGrid.dy = 0;
+
+    activeMap = generateSteerMap(level);
+    updateHUD();
+    drawGameBoard();
+}
+
+function updateHUD() {
+    document.getElementById("hudLevel").innerText = currentLevel;
+    document.getElementById("hudFuel").innerText = fuel;
+    document.getElementById("hudNitro").innerText = nitroAmmo;
+    document.getElementById("hudCoins").innerText = coins;
+    document.getElementById("hudFuel").className = fuel <= 8 ? "hud-warn" : "hud-text";
+}
+
+function drawGameBoard() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            let tile = activeMap[r][c];
+            let x = c * gridSize; let y = r * gridSize;
+
+            ctx.strokeStyle = "rgba(92, 225, 230, 0.25)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, gridSize, gridSize);
+
+            if (tile === 1) ctx.drawImage(document.getElementById("imgBarrier"), x+4, y+4, gridSize-8, gridSize-8);
+            else if (tile === 3) ctx.drawImage(document.getElementById("imgTires"), x+4, y+4, gridSize-8, gridSize-8);
+            else if (tile === 4) ctx.drawImage(document.getElementById("imgBarrels"), x+4, y+4, gridSize-8, gridSize-8);
+            else if (tile === 2) ctx.drawImage(document.getElementById("imgFinish"), x+4, y+4, gridSize-8, gridSize-8);
+            else if (tile === 5) ctx.drawImage(document.getElementById("imgItemFuel"), x+10, y+10, gridSize-20, gridSize-20);
+            else if (tile === 6) ctx.drawImage(document.getElementById("imgItemNitro"), x+10, y+10, gridSize-20, gridSize-20);
+            else if (tile === 7) ctx.drawImage(document.getElementById("imgItemCoin"), x+10, y+10, gridSize-20, gridSize-20);
+        }
+    }
+
+    // Vẽ Xe dựa trên Skin đang kích hoạt
+    let carX = carGrid.x * gridSize + gridSize/2;
+    let carY = carGrid.y * gridSize + gridSize/2;
+
+    ctx.save();
+    ctx.translate(carX, carY);
+    ctx.rotate(carGrid.angle);
+    ctx.shadowBlur = isNitroPreparing ? 15 : 6;
+    ctx.shadowColor = isNitroPreparing ? "#ffcc00" : "#5ce1e6";
+
+    let activeCarImg = document.getElementById("imgCar");
+    if (selectedSkin !== 'default') {
+        activeCarImg = new Image();
+        activeCarImg.src = skinImages[selectedSkin];
+    }
+    ctx.drawImage(activeCarImg, -gridSize/2 + 5, -gridSize/2 + 5, gridSize - 10, gridSize - 10);
+    ctx.restore();
+}
+
+// Hàm đổi hướng/bẻ lái linh hoạt
+function changeDirection(dx, dy) {
+    if (fuel <= 0) return;
+
+    // Cập nhật góc quay đầu ngay lập tức
+    if (dx === 1) carGrid.angle = 0;
+    if (dx === -1) carGrid.angle = Math.PI;
+    if (dy === 1) carGrid.angle = Math.PI / 2;
+    if (dy === -1) carGrid.angle = -Math.PI / 2;
+
+    carGrid.dx = dx;
+    carGrid.dy = dy;
+
+    // Nếu xe chưa chạy, bắt đầu vòng lặp chạy tự động với tốc độ vừa phải
+    if (!moveInterval) {
+        moveInterval = setInterval(stepMove, 220); // 220ms mỗi ô giúp trẻ em dễ điều khiển, bẻ lái kịp thời
+    }
+}
+
+function stepMove() {
+    if (fuel <= 0) { stopCarLoop(); return; }
+
+    let nextX = carGrid.x + carGrid.dx;
+    let nextY = carGrid.y + carGrid.dy;
+
+    // Chạm tường bao quanh bản đồ -> Xe đứng yên chờ bấm hướng khác
+    if (nextX < 0 || nextX >= cols || nextY < 0 || nextY >= rows) {
+        return;
+    }
+
+    let targetTile = activeMap[nextY][nextX];
+
+    // Sử dụng Nitro phá rào
+    if (isNitroPreparing && (targetTile === 1 || targetTile === 3)) {
+        activeMap[nextY][nextX] = 0;
+        carGrid.x = nextX; carGrid.y = nextY;
+        isNitroPreparing = false; nitroAmmo--; fuel--;
+        triggerShake(); checkPickups(); drawGameBoard();
+        return;
+    }
+
+    // Đẩy thùng dầu
+    if (targetTile === 4) {
+        let bNextX = nextX + carGrid.dx;
+        let bNextY = nextY + carGrid.dy;
+        if (bNextX >= 0 && bNextX < cols && bNextY >= 0 && bNextY < rows) {
+            if (activeMap[bNextY][bNextX] === 0) {
+                activeMap[bNextY][bNextX] = 4;
+                activeMap[nextY][nextX] = 0;
+                carGrid.x = nextX; carGrid.y = nextY;
+                fuel--; checkPickups(); drawGameBoard();
+                return;
+            }
+        }
+        return; // Thùng kẹt không đi được thì xe đứng đợi
+    }
+
+    // Gặp rào chắn/lốp xe -> Xe đứng yên tại chỗ không đi được (Chờ người chơi bấm bẻ lái sang hướng khác)
+    if (targetTile === 1 || targetTile === 3) {
+        return;
+    }
+
+    // Đường đi trống hoặc có item -> Tới luôn
+    carGrid.x = nextX;
+    carGrid.y = nextY;
+    fuel--;
+
+    checkPickups();
+    drawGameBoard();
+}
+
+function checkPickups() {
+    let currentTile = activeMap[carGrid.y][carGrid.x];
+
+    if (currentTile === 5) { fuel += 10; activeMap[carGrid.y][carGrid.x] = 0; }
+    else if (currentTile === 6) { nitroAmmo += 1; activeMap[carGrid.y][carGrid.x] = 0; }
+    else if (currentTile === 7) { coins += 5; activeMap[carGrid.y][carGrid.x] = 0; } // Nhặt được 5 xu
+
+    updateHUD();
+
+    if (currentTile === 2) { stopCarLoop(); triggerWinPopup(); }
+    else if (fuel <= 0) { stopCarLoop(); triggerGameOverPopup(); }
+}
+
+function stopCarLoop() {
+    if (moveInterval) clearInterval(moveInterval);
+    moveInterval = null;
+    carGrid.dx = 0; carGrid.dy = 0;
+}
+
+// Hệ thống Click mua/Đổi xe bằng Xu trực tiếp ở bảng Gara
+function buyOrSelectSkin(skinId, price) {
+    if (purchasedSkins.includes(skinId)) {
+        selectedSkin = skinId;
+        alert("Đã đổi sang xe: " + skinId.toUpperCase());
+    } else {
+        if (coins >= price) {
+            coins -= price;
+            purchasedSkins.push(skinId);
+            selectedSkin = skinId;
+            document.getElementById(`price-${skinId}`).innerText = "Đã sở hữu";
+            document.getElementById(`price-${skinId}`).className = "text-success";
+            alert("Chúc mừng ông đã mua thành công xe mới bằng Xu!");
+        } else {
+            alert("Không đủ Xu rồi ông ơi! Chạy vòng vòng gom thêm xu đi!");
+            return;
+        }
+    }
+    document.querySelectorAll('.skin-card').forEach(card => card.classList.remove('active'));
+    document.getElementById(`skin-${skinId}`).classList.add('active');
+    updateHUD();
+    drawGameBoard();
+}
+
+function activateNitro() {
+    if (nitroAmmo > 0 && !isNitroPreparing) {
+        isNitroPreparing = true;
+        drawGameBoard();
+    }
+}
+
+function triggerShake() {
+    canvas.style.transform = "translate(3px, 2px)";
+    setTimeout(() => canvas.style.transform = "translate(-2px, -1px)", 40);
+    setTimeout(() => canvas.style.transform = "translate(0, 0)", 80);
+}
+
+function triggerWinPopup() {
+    let overlay = document.getElementById("racingAlert");
+    document.getElementById("alertIcon").innerHTML = '<i class="fas fa-trophy fa-3x text-warning"></i>';
+    document.getElementById("alertTitle").innerText = "STAGE CLEAR!";
+    document.getElementById("alertMsg").innerText = `Tuyệt vời, giữ nguyên số xu tích lũy để đổi thêm siêu xe nhé!`;
+    overlay.classList.add("active");
+}
+
+function triggerGameOverPopup() {
+    let overlay = document.getElementById("racingAlert");
+    document.getElementById("alertIcon").innerHTML = '<i class="fas fa-skull-crossbones fa-3x text-danger"></i>';
+    document.getElementById("alertTitle").innerText = "HẾT XĂNG GIỮA ĐƯỜNG!";
+    document.getElementById("alertMsg").innerText = "Đừng lo, map sau khi hồi sinh sẽ sinh ngẫu nhiên lại toàn bộ Xu!";
+    document.getElementById("alertBtn").innerHTML = '<i class="fas fa-sync"></i> CHƠI LẠI';
+
+    document.getElementById("alertBtn").onclick = function() {
+        overlay.classList.remove("active");
+        initLevel(currentLevel);
+        document.getElementById("alertBtn").onclick = closeAlertAndContinue;
+    };
+    overlay.classList.add("active");
+}
+
+function closeAlertAndContinue() {
+    document.getElementById("racingAlert").classList.remove("active");
+    if (currentLevel < maxLevels) {
+        currentLevel++;
+        initLevel(currentLevel);
+    } else {
+        window.location.href = "/";
+    }
+}
+
+// Bắt sự kiện phím - bẻ lái mượt mà không bị khựng
+window.addEventListener("keydown", function(e) {
+    if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", " "].includes(e.key)) e.preventDefault();
+    switch(e.key.toLowerCase()) {
+        case "arrowup": case "w": changeDirection(0, -1); break;
+        case "arrowdown": case "s": changeDirection(0, 1); break;
+        case "arrowleft": case "a": changeDirection(-1, 0); break;
+        case "arrowright": case "d": changeDirection(1, 0); break;
+        case " ": case "spacebar": activateNitro(); break;
+    }
+});
+
+window.onload = function() { initLevel(1); };
+</script>
+
+
+<!--<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700;800;900&display=swap" rel="stylesheet">-->
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">-->
+
+<!--<style>-->
+<!--    .game-bg {-->
+<!--        background: url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1920') no-repeat center center fixed;-->
+<!--        background-size: cover;-->
+<!--        font-family: 'Barlow', sans-serif;-->
+<!--        color: #fff;-->
+<!--        min-height: 100vh;-->
+<!--        user-select: none;-->
+<!--        overflow-x: hidden;-->
+<!--    }-->
+
+<!--    .game-header {-->
+<!--        background: rgba(18, 24, 32, 0.85);-->
+<!--        border-bottom: 2px solid #5ce1e6;-->
+<!--        padding: 15px 40px;-->
+<!--    }-->
+
+<!--    .hud-title {-->
+<!--        font-size: 22px;-->
+<!--        font-weight: 900;-->
+<!--        letter-spacing: 0.5px;-->
+<!--        color: #5ce1e6;-->
+<!--        text-transform: uppercase;-->
+<!--    }-->
+<!--    .hud-title span { color: #fff; }-->
+<!--    .hud-text { font-weight: 800; color: #5ce1e6; font-size: 22px; }-->
+<!--    .hud-warn { font-weight: 800; color: #ff4d4d; font-size: 22px; }-->
+
+<!--    .game-container {-->
+<!--        display: flex;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
+<!--        gap: 50px;-->
+<!--        max-width: 1350px;-->
+<!--        margin: 40px auto;-->
+<!--        padding: 0 20px;-->
+<!--    }-->
+
+<!--    .canvas-wrapper {-->
+<!--        border: 3px solid #5ce1e6;-->
+<!--        border-radius: 8px;-->
+<!--        box-shadow: 0 0 20px rgba(92, 225, 230, 0.5);-->
+<!--        background: rgba(255, 255, 255, 0.05);-->
+<!--        overflow: hidden;-->
+<!--    }-->
+
+<!--    canvas { display: block; }-->
+
+<!--    .control-panel {-->
+<!--        background: #252932;-->
+<!--        border: 3px solid #3c414c;-->
+<!--        border-radius: 14px;-->
+<!--        padding: 45px 30px;-->
+<!--        box-shadow: 0 15px 35px rgba(0,0,0,0.6);-->
+<!--        width: 360px;-->
+<!--        height: 420px;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        justify-content: space-between;-->
+<!--        align-items: center;-->
+<!--    }-->
+
+<!--    .d-pad {-->
+<!--        position: relative;-->
+<!--        width: 240px;-->
+<!--        height: 240px;-->
+<!--    }-->
+
+<!--    .d-btn {-->
+<!--        position: absolute;-->
+<!--        width: 66px;-->
+<!--        height: 66px;-->
+<!--        background: #1a1d24;-->
+<!--        border: 2px solid #323742;-->
+<!--        color: #5ce1e6;-->
+<!--        border-radius: 10px;-->
+<!--        font-size: 24px;-->
+<!--        cursor: pointer;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--        box-shadow: inset 0 -2px 0 rgba(0,0,0,0.6), 0 4px 6px rgba(0,0,0,0.3);-->
+<!--        transition: all 0.1s ease;-->
+<!--    }-->
+<!--    .d-btn:hover { border-color: #5ce1e6; color: #fff; }-->
+<!--    .d-btn:active { transform: scale(0.96); background: #5ce1e6; color: #1a1d24; }-->
+
+<!--    .btn-up    { top: 0px; left: 87px; }-->
+<!--    .btn-left  { top: 87px; left: 0px; }-->
+<!--    .btn-right { top: 87px; right: 0px; }-->
+<!--    .btn-down  { bottom: 0px; left: 87px; }-->
+
+<!--    .btn-nitro {-->
+<!--        position: absolute;-->
+<!--        top: 81px;-->
+<!--        left: 81px;-->
+<!--        width: 78px;-->
+<!--        height: 78px;-->
+<!--        background: radial-gradient(circle at 50% 30%, #ff5252 0%, #b30000 65%, #590000 100%);-->
+<!--        border: 4px solid #ffcc00;-->
+<!--        border-radius: 50%;-->
+<!--        color: #fff;-->
+<!--        font-size: 11px;-->
+<!--        font-weight: 900;-->
+<!--        letter-spacing: 0.5px;-->
+<!--        cursor: pointer;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--        box-shadow: 0 6px 12px rgba(179, 0, 0, 0.4), inset 0 3px 5px rgba(255,255,255,0.25);-->
+<!--        transition: all 0.1s ease;-->
+<!--    }-->
+<!--    .btn-nitro i { font-size: 20px; margin-bottom: 1px; color: #ffcc00; }-->
+<!--    .btn-nitro:hover { transform: scale(1.03); filter: brightness(1.1); }-->
+<!--    .btn-nitro:active { transform: scale(0.95); }-->
+
+<!--    .instruction-text {-->
+<!--        color: #8fa0b5; font-size: 11px; font-weight: 600; text-align: center; line-height: 1.6;-->
+<!--    }-->
+
+<!--    .racing-alert-overlay {-->
+<!--        position: fixed;-->
+<!--        top: 0; left: 0; width: 100%; height: 100%;-->
+<!--        background: rgba(10, 14, 20, 0.85);-->
+<!--        backdrop-filter: blur(4px);-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--        z-index: 9999;-->
+<!--        opacity: 0; pointer-events: none;-->
+<!--        transition: all 0.2s ease;-->
+<!--    }-->
+<!--    .racing-alert-overlay.active { opacity: 1; pointer-events: auto; }-->
+<!--    .racing-alert-box {-->
+<!--        background: #222733; border: 3px solid #5ce1e6; border-radius: 12px;-->
+<!--        padding: 40px; text-align: center; max-width: 450px; width: 90%;-->
+<!--    }-->
+<!--    .btn-next-stage {-->
+<!--        background: #5ce1e6; border: none; color: #111; font-weight: 900;-->
+<!--        padding: 12px 30px; font-size: 14px; border-radius: 4px; cursor: pointer;-->
+<!--    }-->
+<!--</style>-->
+
+<!--<div class="game-bg">-->
+<!--    &lt;!&ndash; TOP BAR HUD &ndash;&gt;-->
+<!--    <div class="game-header">-->
+<!--        <div class="container-fluid d-flex justify-content-between align-items-center">-->
+<!--            <div><h2 class="m-0 hud-title"><i class="fas fa-random text-white me-2"></i> NITRO RACING <span>ROGUELIKE PUZZLE</span></h2></div>-->
+<!--            <div class="fs-5 fw-bold text-uppercase">STAGE: <span class="hud-text" id="hudLevel">1</span></div>-->
+<!--            <div class="fs-5 fw-bold text-uppercase">FUEL: <span class="hud-warn" id="hudFuel">25</span></div>-->
+<!--            <div class="fs-5 fw-bold text-uppercase">NITRO AMMO: <span class="hud-text" id="hudNitro">0</span></div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; MAIN GAME WORKSPACE &ndash;&gt;-->
+<!--    <div class="game-container">-->
+<!--        <div class="canvas-wrapper">-->
+<!--            <canvas id="mapCanvas" width="600" height="600"></canvas>-->
+<!--        </div>-->
+
+<!--        <div class="control-panel">-->
+<!--            <div class="d-pad">-->
+<!--                <button class="d-btn btn-up" onclick="moveCar(0, -1)"><i class="fas fa-chevron-up"></i></button>-->
+<!--                <button class="d-btn btn-left" onclick="moveCar(-1, 0)"><i class="fas fa-chevron-left"></i></button>-->
+<!--                <button class="d-btn btn-right" onclick="moveCar(1, 0)"><i class="fas fa-chevron-right"></i></button>-->
+<!--                <button class="d-btn btn-down" onclick="moveCar(0, 1)"><i class="fas fa-chevron-down"></i></button>-->
+
+<!--                <button class="btn-nitro" onclick="activateNitro()">-->
+<!--                    <i class="fas fa-fire"></i>-->
+<!--                    <span>NITRO</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="instruction-text">-->
+<!--                <i class="fas fa-sync-alt text-success"></i> <b>BẢN ĐỒ GENERATED NGẪU NHIÊN!</b><br>Mỗi lần bấm chơi lại hoặc qua màn là một thử thách hoàn toàn mới.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; ALERT POPUP &ndash;&gt;-->
+<!--<div class="racing-alert-overlay" id="racingAlert">-->
+<!--    <div class="racing-alert-box">-->
+<!--        <div class="mb-3" id="alertIcon"><i class="fas fa-trophy fa-3x text-warning"></i></div>-->
+<!--        <h3 class="text-white mb-2" id="alertTitle" style="font-weight:900;">STAGE CLEAR!</h3>-->
+<!--        <p class="text-muted mb-4" id="alertMsg">Vượt qua màn chơi xuất sắc!</p>-->
+<!--        <button class="btn-next-stage" id="alertBtn" onclick="closeAlertAndContinue()">TIẾP TỤC CHẶNG KẾ <i class="fas fa-chevron-right"></i></button>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; ĐÃ ĐỒNG BỘ TOÀN BỘ FILE HÌNH ẢNH SỬ DỤNG STATIC CỦA ÔNG &ndash;&gt;-->
+<!--<img id="imgCar" src="{% static 'game/img/gt3_car.png' %}" style="display:none;">-->
+<!--<img id="imgBarrier" src="{% static 'game/img/barrier.png' %}" style="display:none;">-->
+<!--<img id="imgTires" src="{% static 'game/img/tires.png' %}" style="display:none;">-->
+<!--<img id="imgBarrels" src="{% static 'game/img/barrels.png' %}" style="display:none;">-->
+<!--<img id="imgFinish" src="{% static 'game/img/finish.png' %}" style="display:none;">-->
+<!--<img id="imgItemFuel" src="{% static 'game/img/fuel.png' %}" style="display:none;">-->
+<!--<img id="imgItemNitro" src="{% static 'game/img/nitro_item.png' %}" style="display:none;">-->
+
+<!--<script>-->
+<!--const canvas = document.getElementById("mapCanvas");-->
+<!--const ctx = canvas.getContext("2d");-->
+
+<!--const gridSize = 60;-->
+<!--const cols = 10;-->
+<!--const rows = 10;-->
+
+<!--let currentLevel = 1;-->
+<!--const maxLevels = 5; // Độ dài chặng đua giải thưởng, muốn tăng lên 10 tùy ông-->
+<!--let fuel = 25;-->
+<!--let nitroAmmo = 0;-->
+<!--let isNitroPreparing = false;-->
+<!--let carGrid = { x: 0, y: 0, angle: 0 };-->
+<!--let activeMap = [];-->
+
+<!--// HÀM TỰ ĐỘNG GENERATE BẢN ĐỒ ĐẢM BẢO GIẢI ĐƯỢC (BẮT BUỘC CÓ ĐƯỜNG ĐI CHÍNH)-->
+<!--function generateRandomMap(level) {-->
+<!--    let map = Array(rows).fill().map(() => Array(cols).fill(0));-->
+
+<!--    // Đặt Đích đến cố định ở góc đối diện (9,9) để kéo giãn bản đồ xa nhất-->
+<!--    map[rows - 1][cols - 1] = 2;-->
+
+<!--    // Tạo một đường đi ảo ngẫu nhiên bằng thuật toán Walk từ (0,0) tới (9,9) để tránh map lỗi-->
+<!--    let walkX = 0, walkY = 0;-->
+<!--    let safePath = ["0,0"];-->
+<!--    while (walkX < cols - 1 || walkY < rows - 1) {-->
+<!--        if (Math.random() > 0.5 && walkX < cols - 1) walkX++;-->
+<!--        else if (walkY < rows - 1) walkY++;-->
+<!--        safePath.push(`${walkY},${walkX}`);-->
+<!--    }-->
+
+<!--    // Tỷ lệ mật độ vật cản tăng dần dựa theo độ khó của Stage hiện tại-->
+<!--    let obstacleChance = 0.18 + (level * 0.02); // Stage 1 là 20%, tăng dần lên-->
+
+<!--    for (let r = 0; r < rows; r++) {-->
+<!--        for (let c = 0; c < cols; c++) {-->
+<!--            // Không được đặt vật cản đè lên đường đi an toàn, điểm xuất phát và đích-->
+<!--            if (safePath.includes(`${r},${c}`) || (r === 0 && c === 0) || (r === rows-1 && c === cols-1)) {-->
+<!--                continue;-->
+<!--            }-->
+
+<!--            let roll = Math.random();-->
+<!--            if (roll < obstacleChance) {-->
+<!--                // Chia ngẫu nhiên các loại vật cản: 1=Rào chắn, 3=Lốp xe, 4=Thùng dầu đẩy-->
+<!--                let obsType = Math.random();-->
+<!--                if (obsType < 0.35) map[r][c] = 1;-->
+<!--                else if (obsType < 0.70) map[r][c] = 3;-->
+<!--                else map[r][c] = 4;-->
+<!--            } else if (roll < obstacleChance + 0.05) {-->
+<!--                // 5% xuất hiện Bình xăng ngẫu nhiên ngoài đường đi chính để thử thách ăn thêm-->
+<!--                map[r][c] = 5;-->
+<!--            } else if (roll < obstacleChance + 0.08) {-->
+<!--                // 3% xuất hiện Đạn Nitro phá rào-->
+<!--                map[r][c] = 6;-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Đảm bảo rải tối thiểu 2 bình xăng và 1 bình nitro trên các ô trống ngẫu nhiên của đường đi chính-->
+<!--    let fuelPlaced = 0, nitroPlaced = 0;-->
+<!--    while(fuelPlaced < 2 || nitroPlaced < 1) {-->
+<!--        let randCell = safePath[Math.floor(Math.random() * (safePath.length - 2)) + 1];-->
+<!--        let [ry, rx] = randCell.split(',').map(Number);-->
+<!--        if (map[ry][rx] === 0) {-->
+<!--            if (fuelPlaced < 2) { map[ry][rx] = 5; fuelPlaced++; }-->
+<!--            else if (nitroPlaced < 1) { map[ry][rx] = 6; nitroPlaced++; }-->
+<!--        }-->
+<!--    }-->
+
+<!--    return map;-->
+<!--}-->
+
+<!--function initLevel(level) {-->
+<!--    document.getElementById("hudLevel").innerText = level;-->
+<!--    fuel = 24 + level * 2; // Càng lên stage cao càng được cấp nhiều xăng hơn vì map lắt léo-->
+<!--    nitroAmmo = 1; // Cho sẵn 1 đạn để thủ thân-->
+<!--    isNitroPreparing = false;-->
+
+<!--    carGrid.x = 0; carGrid.y = 0; carGrid.angle = 0;-->
+<!--    activeMap = generateRandomMap(level);-->
+
+<!--    updateHUD();-->
+<!--    drawGameBoard();-->
+<!--}-->
+
+<!--function updateHUD() {-->
+<!--    document.getElementById("hudFuel").innerText = fuel;-->
+<!--    document.getElementById("hudNitro").innerText = nitroAmmo;-->
+<!--    document.getElementById("hudFuel").className = fuel <= 6 ? "hud-warn" : "hud-text";-->
+<!--}-->
+
+<!--function drawGameBoard() {-->
+<!--    ctx.clearRect(0, 0, canvas.width, canvas.height);-->
+
+<!--    for (let r = 0; r < rows; r++) {-->
+<!--        for (let c = 0; c < cols; c++) {-->
+<!--            let tile = activeMap[r][c];-->
+<!--            let x = c * gridSize;-->
+<!--            let y = r * gridSize;-->
+
+<!--            ctx.strokeStyle = "rgba(92, 225, 230, 0.4)";-->
+<!--            ctx.lineWidth = 1;-->
+<!--            ctx.strokeRect(x, y, gridSize, gridSize);-->
+
+<!--            if (tile === 1) ctx.drawImage(document.getElementById("imgBarrier"), x + 4, y + 4, gridSize - 8, gridSize - 8);-->
+<!--            else if (tile === 3) ctx.drawImage(document.getElementById("imgTires"), x + 4, y + 4, gridSize - 8, gridSize - 8);-->
+<!--            else if (tile === 4) ctx.drawImage(document.getElementById("imgBarrels"), x + 4, y + 4, gridSize - 8, gridSize - 8);-->
+<!--            else if (tile === 2) ctx.drawImage(document.getElementById("imgFinish"), x + 4, y + 4, gridSize - 8, gridSize - 8);-->
+<!--            else if (tile === 5) ctx.drawImage(document.getElementById("imgItemFuel"), x + 8, y + 8, gridSize - 16, gridSize - 16);-->
+<!--            else if (tile === 6) ctx.drawImage(document.getElementById("imgItemNitro"), x + 8, y + 8, gridSize - 16, gridSize - 16);-->
+<!--        }-->
+<!--    }-->
+
+<!--    const carImg = document.getElementById("imgCar");-->
+<!--    let carX = carGrid.x * gridSize + gridSize/2;-->
+<!--    let carY = carGrid.y * gridSize + gridSize/2;-->
+
+<!--    ctx.save();-->
+<!--    ctx.translate(carX, carY);-->
+<!--    ctx.rotate(carGrid.angle);-->
+<!--    ctx.shadowBlur = isNitroPreparing ? 15 : 8;-->
+<!--    ctx.shadowColor = isNitroPreparing ? "#ffcc00" : "#5ce1e6";-->
+<!--    ctx.drawImage(carImg, -gridSize/2 + 5, -gridSize/2 + 5, gridSize - 10, gridSize - 10);-->
+<!--    ctx.restore();-->
+<!--}-->
+
+<!--function moveCar(dx, dy) {-->
+<!--    if (fuel <= 0) return;-->
+
+<!--    let nextX = carGrid.x + dx;-->
+<!--    let nextY = carGrid.y + dy;-->
+
+<!--    if (dx === 1) carGrid.angle = 0;-->
+<!--    if (dx === -1) carGrid.angle = Math.PI;-->
+<!--    if (dy === 1) carGrid.angle = Math.PI / 2;-->
+<!--    if (dy === -1) carGrid.angle = -Math.PI / 2;-->
+
+<!--    if (nextX >= 0 && nextX < cols && nextY >= 0 && nextY < rows) {-->
+<!--        let targetTile = activeMap[nextY][nextX];-->
+
+<!--        if (isNitroPreparing && (targetTile === 1 || targetTile === 3)) {-->
+<!--            activeMap[nextY][nextX] = 0;-->
+<!--            carGrid.x = nextX; carGrid.y = nextY;-->
+<!--            isNitroPreparing = false;-->
+<!--            nitroAmmo&#45;&#45;; fuel&#45;&#45;;-->
+<!--            triggerShake();-->
+<!--            checkPickupsAndVictory();-->
+<!--            return;-->
+<!--        }-->
+
+<!--        if (targetTile === 4) {-->
+<!--            let barrelNextX = nextX + dx;-->
+<!--            let barrelNextY = nextY + dy;-->
+<!--            if (barrelNextX >= 0 && barrelNextX < cols && barrelNextY >= 0 && barrelNextY < rows) {-->
+<!--                if (activeMap[barrelNextY][barrelNextX] === 0) {-->
+<!--                    activeMap[barrelNextY][barrelNextX] = 4;-->
+<!--                    activeMap[nextY][nextX] = 0;-->
+<!--                    carGrid.x = nextX; carGrid.y = nextY;-->
+<!--                    fuel&#45;&#45;; isNitroPreparing = false;-->
+<!--                    checkPickupsAndVictory();-->
+<!--                    return;-->
+<!--                }-->
+<!--            }-->
+<!--            triggerShake(); return;-->
+<!--        }-->
+
+<!--        if (targetTile === 1 || targetTile === 3) { triggerShake(); return; }-->
+
+<!--        carGrid.x = nextX; carGrid.y = nextY;-->
+<!--        fuel&#45;&#45;;-->
+<!--        checkPickupsAndVictory();-->
+<!--    }-->
+<!--}-->
+
+<!--function checkPickupsAndVictory() {-->
+<!--    let currentTile = activeMap[carGrid.y][carGrid.x];-->
+
+<!--    if (currentTile === 5) { fuel += 8; activeMap[carGrid.y][carGrid.x] = 0; }-->
+<!--    else if (currentTile === 6) { nitroAmmo += 1; activeMap[carGrid.y][carGrid.x] = 0; }-->
+
+<!--    updateHUD();-->
+<!--    drawGameBoard();-->
+
+<!--    if (currentTile === 2) { triggerWinPopup(); }-->
+<!--    else if (fuel <= 0) { triggerGameOverPopup(); }-->
+<!--}-->
+
+<!--function activateNitro() {-->
+<!--    if (nitroAmmo > 0 && !isNitroPreparing) { isNitroPreparing = true; drawGameBoard(); }-->
+<!--}-->
+
+<!--function triggerShake() {-->
+<!--    canvas.style.transform = "translate(3px, 2px)";-->
+<!--    setTimeout(() => canvas.style.transform = "translate(-2px, -1px)", 40);-->
+<!--    setTimeout(() => canvas.style.transform = "translate(0, 0)", 80);-->
+<!--}-->
+
+<!--function triggerWinPopup() {-->
+<!--    let overlay = document.getElementById("racingAlert");-->
+<!--    let title = document.getElementById("alertTitle");-->
+<!--    let msg = document.getElementById("alertMsg");-->
+<!--    let icon = document.getElementById("alertIcon");-->
+<!--    let btn = document.getElementById("alertBtn");-->
+
+<!--    icon.innerHTML = '<i class="fas fa-trophy fa-3x text-warning"></i>';-->
+<!--    if (currentLevel < maxLevels) {-->
+<!--        title.innerText = `STAGE ${currentLevel} HOÀN THÀNH!`;-->
+<!--        msg.innerText = `🏁 Tuyệt vời. Chuẩn bị hệ thống định vị cho bản đồ ngẫu nhiên tiếp theo!`;-->
+<!--        btn.innerText = "TIẾP TỤC CHẶNG KẾ";-->
+<!--    } else {-->
+<!--        title.innerText = `🏆 CHAMPION ROGUELIKER!`;-->
+<!--        msg.innerText = `Bá chủ chuỗi map ngẫu nhiên! Bạn đã mở khóa phần thưởng tối cao!`;-->
+<!--        btn.innerText = "NHẬN THƯỞNG CUỐI";-->
+<!--    }-->
+<!--    overlay.classList.add("active");-->
+<!--}-->
+
+<!--function triggerGameOverPopup() {-->
+<!--    let overlay = document.getElementById("racingAlert");-->
+<!--    let title = document.getElementById("alertTitle");-->
+<!--    let msg = document.getElementById("alertMsg");-->
+<!--    let icon = document.getElementById("alertIcon");-->
+<!--    let btn = document.getElementById("alertBtn");-->
+
+<!--    icon.innerHTML = '<i class="fas fa-skull-crossbones fa-3x text-danger"></i>';-->
+<!--    title.innerText = `CHÁY MÁY / KẸT ĐƯỜNG!`;-->
+<!--    msg.innerText = `Bản đồ sau khi hồi sinh sẽ được tự động đổi cấu trúc ngẫu nhiên mới hoàn toàn!`;-->
+<!--    btn.innerHTML = '<i class="fas fa-sync"></i> THỬ LẠI MAP MỚI';-->
+
+<!--    btn.onclick = function() {-->
+<!--        overlay.classList.remove("active");-->
+<!--        initLevel(currentLevel);-->
+<!--        btn.onclick = closeAlertAndContinue;-->
+<!--    };-->
+<!--    overlay.classList.add("active");-->
+<!--}-->
+
+<!--function closeAlertAndContinue() {-->
+<!--    document.getElementById("racingAlert").classList.remove("active");-->
+<!--    if (currentLevel < maxLevels) {-->
+<!--        currentLevel++;-->
+<!--        initLevel(currentLevel);-->
+<!--    } else {-->
+<!--        fetch('/game-pointer/api/finish/', {-->
+<!--            method: 'POST',-->
+<!--            headers: { 'X-CSRFToken': '{{ csrf_token }}' }-->
+<!--        })-->
+<!--        .then(res => res.json())-->
+<!--        .then(data => {-->
+<!--            alert(`Chúc mừng! Voucher của bạn: ${data.voucher_code}`);-->
+<!--            window.location.href = "/";-->
+<!--        })-->
+<!--        .catch(err => { window.location.href = "/"; });-->
+<!--    }-->
+<!--}-->
+
+<!--window.addEventListener("keydown", function(e) {-->
+<!--    if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", " "].includes(e.key)) e.preventDefault();-->
+<!--    switch(e.key.toLowerCase()) {-->
+<!--        case "arrowup": case "w": moveCar(0, -1); break;-->
+<!--        case "arrowdown": case "s": moveCar(0, 1); break;-->
+<!--        case "arrowleft": case "a": moveCar(-1, 0); break;-->
+<!--        case "arrowright": case "d": moveCar(1, 0); break;-->
+<!--        case " ": case "spacebar": activateNitro(); break;-->
+<!--    }-->
+<!--});-->
+
+<!--window.onload = function() { initLevel(1); };-->
+<!--</script>-->
+{% endblock %}

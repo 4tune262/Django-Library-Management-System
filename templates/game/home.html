@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+
+<link rel="stylesheet" href="{% static 'game/css/game.css' %}">
+
+<div class="game-bg">
+
+    <div class="container">
+
+        <div class="row justify-content-center align-items-center"
+             style="min-height:100vh;">
+
+            <!-- Character -->
+
+            <div class="col-lg-5 text-center">
+
+                <img
+                        src="{% static 'game/img/anime.png' %}"
+                        class="anime-big"
+                        style="max-width:420px;filter:drop-shadow(0 0 30px cyan);">
+
+            </div>
+
+            <!-- Menu -->
+
+            <div class="col-lg-7">
+
+                <div class="game-main p-5 rounded-4">
+
+                    <h4
+                            class="text-info mb-3"
+                            style="letter-spacing:4px;">
+
+                        C++ CODING ARENA
+
+                    </h4>
+
+                    <h1
+                            class="text-white fw-bold mb-4">
+
+                        Học C++ Qua Trò Chơi
+
+                    </h1>
+
+                    <p
+                            class="text-light mb-5">
+
+                        Trả lời các câu hỏi từ Easy → Medium → Hard.
+                        Hoàn thành toàn bộ thử thách để nhận Voucher giảm giá.
+
+                    </p>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="score-box">
+
+                                <div>TỔNG ĐIỂM</div>
+
+                                <div id="scoreText">
+
+                                    {{ total }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="score-box">
+
+                                <div>LEVEL</div>
+
+                                <div id="scoreText">
+
+                                    EASY
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                  <div class="text-center mt-5">
+    <a href="{% url 'play_game' level='easy' %}" class="btn-action-start">
+        ⚡ BẮT ĐẦU NÀO
+    </a>
+</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{% static 'game/js/game.js' %}"></script>
+
+{% endblock %}

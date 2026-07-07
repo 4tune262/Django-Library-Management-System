@@ -1,0 +1,1386 @@
+/*======================================================
+        C++ CODING ARENA
+        GAME CSS
+        PART 1
+=======================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+/*======================================================
+                    BACKGROUND
+=======================================================*/
+
+body{
+
+    background:#050816;
+
+    overflow-x:hidden;
+
+}
+
+.game-bg{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+    135deg,
+    #060818 0%,
+    #0b1c38 40%,
+    #12114f 100%);
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+/*======================================================
+        Animated Background
+=======================================================*/
+
+.game-bg::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:800px;
+
+    height:800px;
+
+    border-radius:50%;
+
+    background:#00fff2;
+
+    filter:blur(180px);
+
+    opacity:.08;
+
+    top:-250px;
+
+    left:-250px;
+
+    animation:floatLight 10s infinite alternate;
+
+}
+
+
+.game-bg::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:700px;
+
+    height:700px;
+
+    border-radius:50%;
+
+    background:#7a5cff;
+
+    filter:blur(180px);
+
+    opacity:.08;
+
+    right:-250px;
+
+    bottom:-250px;
+
+    animation:floatLight2 12s infinite alternate;
+
+}
+
+
+@keyframes floatLight{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(150px,80px);
+
+    }
+
+}
+
+
+@keyframes floatLight2{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(-120px,-120px);
+
+    }
+
+}
+
+
+/*======================================================
+                HEADER
+=======================================================*/
+
+.game-header{
+
+    padding:20px;
+
+    position:relative;
+
+    z-index:100;
+
+}
+
+
+/*======================================================
+            LEVEL BOX
+=======================================================*/
+
+.level-box{
+
+    display:inline-block;
+
+    padding:15px 45px;
+
+    border-radius:15px;
+
+    color:white;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    letter-spacing:3px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:blur(12px);
+
+    box-shadow:
+
+    0 0 25px rgba(0,255,255,.4);
+
+}
+
+.level-box span{
+
+    color:#00fff2;
+
+    margin-left:12px;
+
+}
+
+
+/*======================================================
+            SCORE BOX
+=======================================================*/
+
+.score-box{
+
+    width:180px;
+
+    margin-left:auto;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    color:white;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:
+
+    0 0 25px rgba(0,255,255,.2);
+
+}
+
+.score-box div:first-child{
+
+    font-size:16px;
+
+    letter-spacing:2px;
+
+}
+
+#scoreText{
+
+    margin-top:8px;
+
+    font-size:34px;
+
+    color:#00fff2;
+
+    font-weight:bold;
+
+}
+
+
+/*======================================================
+            TIMER
+=======================================================*/
+
+.timer-box{
+
+    margin-top:20px;
+
+    margin-left:auto;
+
+    width:180px;
+
+    text-align:center;
+
+    padding:12px;
+
+    color:white;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    backdrop-filter:blur(10px);
+
+}
+
+#timer{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:30px;
+
+    color:#ffcf33;
+
+    font-weight:bold;
+
+}
+/*==================================================
+                CYBER ANIMATION
+==================================================*/
+
+.game-main{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+/* Viền neon chạy */
+
+.game-main::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-2px;
+    left:-2px;
+
+    width:calc(100% + 4px);
+    height:calc(100% + 4px);
+
+    background:linear-gradient(
+        90deg,
+        cyan,
+        blue,
+        purple,
+        cyan
+    );
+
+    background-size:400%;
+
+    border-radius:22px;
+
+    z-index:-2;
+
+    animation:borderMove 6s linear infinite;
+
+}
+
+.game-main::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:3px;
+
+    background:#111827;
+
+    border-radius:18px;
+
+    z-index:-1;
+
+}
+
+@keyframes borderMove{
+
+    0%{
+
+        background-position:0%;
+
+    }
+
+    100%{
+
+        background-position:400%;
+
+    }
+
+}
+
+/*==================================================
+                    CHARACTER
+==================================================*/
+
+.game-character{
+
+    position:relative;
+
+}
+
+.game-character img{
+
+    filter:drop-shadow(0 0 20px cyan);
+
+}
+
+/* nhân vật lắc */
+
+.correct{
+
+    animation:correctShake .6s;
+
+}
+
+@keyframes correctShake{
+
+    0%{
+
+        transform:rotate(0deg);
+
+    }
+
+    20%{
+
+        transform:rotate(-8deg);
+
+    }
+
+    40%{
+
+        transform:rotate(8deg);
+
+    }
+
+    60%{
+
+        transform:rotate(-6deg);
+
+    }
+
+    80%{
+
+        transform:rotate(6deg);
+
+    }
+
+    100%{
+
+        transform:rotate(0deg);
+
+    }
+
+}
+
+/* Sai chuyển đỏ */
+
+.wrong{
+
+    animation:wrongFlash .7s;
+
+}
+
+@keyframes wrongFlash{
+
+    0%{
+
+        filter:drop-shadow(0 0 20px red);
+
+    }
+
+    25%{
+
+        filter:brightness(180%) hue-rotate(-50deg);
+
+    }
+
+    50%{
+
+        filter:drop-shadow(0 0 30px crimson);
+
+    }
+
+    100%{
+
+        filter:drop-shadow(0 0 20px cyan);
+
+    }
+
+}
+
+/*==================================================
+                    BUTTON
+==================================================*/
+
+.answer-btn{
+
+    cursor:pointer;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.answer-btn::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:-120%;
+
+    width:60%;
+
+    height:100%;
+
+    background:rgba(255,255,255,.25);
+
+    transform:skew(-25deg);
+
+    transition:.6s;
+
+}
+
+.answer-btn:hover::before{
+
+    left:150%;
+
+}
+
+.answer-btn:active{
+
+    transform:scale(.96);
+
+}
+
+/*==================================================
+                QUESTION
+==================================================*/
+
+.question-box{
+
+    animation:fadeQuestion .5s;
+
+}
+
+@keyframes fadeQuestion{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*==================================================
+                CODE BOX
+==================================================*/
+
+.code-box{
+
+    position:relative;
+    background:#0b1220;
+    color:#00fff2;
+    padding:18px;
+    border-radius:12px;
+    font-family: monospace;
+    font-size:15px;
+    line-height:1.6;
+    overflow-x:auto;
+    border:1px solid rgba(0,255,255,.2);
+    box-shadow: 0 0 20px rgba(0,255,255,.15);
+    white-space: pre-wrap;
+
+}
+
+.code-box::before{
+
+    content:"C++";
+
+    position:absolute;
+
+    top:12px;
+
+    right:18px;
+
+    color:cyan;
+
+    font-weight:bold;
+
+    opacity:.45;
+
+}
+
+/*==================================================
+                TIMER
+==================================================*/
+
+.timer-danger{
+
+    animation:dangerBlink .7s infinite;
+
+}
+
+@keyframes dangerBlink{
+
+    0%{
+
+        background:#dc2626;
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        background:#ff0000;
+
+        transform:scale(1.08);
+
+    }
+
+    100%{
+
+        background:#dc2626;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/*==================================================
+                SCORE
+==================================================*/
+
+.score-box{
+
+    transition:.3s;
+
+}
+
+.score-add{
+
+    animation:addScore .6s;
+
+}
+
+@keyframes addScore{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.25);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+/*==================================================
+                LEVEL
+==================================================*/
+
+.level-box{
+
+    animation:glowLevel 2s infinite alternate;
+
+}
+
+@keyframes glowLevel{
+
+    from{
+
+        box-shadow:0 0 12px cyan;
+
+    }
+
+    to{
+
+        box-shadow:
+
+        0 0 35px cyan,
+
+        0 0 50px blue;
+
+    }
+
+}
+
+/*==================================================
+            SCREEN SHAKE
+==================================================*/
+
+.screen-shake{
+
+    animation:screenShake .45s;
+
+}
+
+@keyframes screenShake{
+
+    0%{
+
+        transform:translate(0);
+
+    }
+
+    20%{
+
+        transform:translate(-6px,4px);
+
+    }
+
+    40%{
+
+        transform:translate(6px,-4px);
+
+    }
+
+    60%{
+
+        transform:translate(-5px,3px);
+
+    }
+
+    80%{
+
+        transform:translate(4px,-2px);
+
+    }
+
+    100%{
+
+        transform:translate(0);
+
+    }
+
+}
+/*==================================================
+            BACKGROUND PARTICLE
+==================================================*/
+
+body{
+
+    position:relative;
+
+    overflow-x:hidden;
+
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    pointer-events:none;
+
+    background-image:
+
+    radial-gradient(circle,rgba(0,255,255,.8) 2px,transparent 2px),
+    radial-gradient(circle,rgba(255,255,255,.5) 1px,transparent 1px),
+    radial-gradient(circle,rgba(0,180,255,.7) 2px,transparent 2px);
+
+    background-size:
+
+    140px 140px,
+    220px 220px,
+    180px 180px;
+
+    animation:particleMove 35s linear infinite;
+
+    opacity:.35;
+
+    z-index:-10;
+
+}
+
+@keyframes particleMove{
+
+    from{
+
+        transform:translateY(0);
+
+    }
+
+    to{
+
+        transform:translateY(-500px);
+
+    }
+
+}
+
+/*==================================================
+            FLOATING GLOW
+==================================================*/
+
+.game-main{
+
+    animation:floatingCard 5s ease-in-out infinite;
+
+}
+
+@keyframes floatingCard{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-6px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+/*==================================================
+            CHARACTER HOVER
+==================================================*/
+
+.game-character img:hover{
+
+    transform:
+
+        scale(1.05)
+
+        rotate(-2deg);
+
+    filter:
+
+        drop-shadow(0 0 30px cyan);
+
+}
+
+/*==================================================
+            POPUP WIN
+==================================================*/
+
+.win-popup{
+
+    position:fixed;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:520px;
+
+    background:#101827;
+
+    border:3px solid cyan;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    padding:40px;
+
+    display:none;
+
+    z-index:9999;
+
+    box-shadow:
+
+    0 0 60px cyan;
+
+    animation:popupShow .5s;
+
+}
+
+@keyframes popupShow{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+        translate(-50%,-45%)
+
+        scale(.8);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+        translate(-50%,-50%)
+
+        scale(1);
+
+    }
+
+}
+
+.win-popup h1{
+
+    color:#00ffff;
+
+    font-size:42px;
+
+}
+
+.win-popup p{
+
+    color:white;
+
+    font-size:22px;
+
+}
+
+.win-popup button{
+
+    margin-top:25px;
+
+    padding:14px 35px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#00d4ff;
+
+    color:white;
+
+    font-size:20px;
+
+    transition:.3s;
+
+}
+
+.win-popup button:hover{
+
+    background:#008cff;
+
+    transform:scale(1.05);
+
+}
+
+/*==================================================
+                DARK OVERLAY
+==================================================*/
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.65);
+
+    z-index:9998;
+
+}
+
+/*==================================================
+            PROGRESS BAR
+==================================================*/
+
+.progress-wrapper{
+
+    width:100%;
+
+    height:16px;
+
+    border-radius:20px;
+
+    background:#1f2937;
+
+    overflow:hidden;
+
+    margin-bottom:25px;
+
+}
+
+.progress-bar{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+
+        90deg,
+
+        cyan,
+
+        blue
+
+    );
+
+    transition:.5s;
+
+}
+
+/*==================================================
+            LEVEL BADGE
+==================================================*/
+
+.level-box.easy{
+
+    background:#16a34a;
+
+}
+
+.level-box.medium{
+
+    background:#f59e0b;
+
+}
+
+.level-box.hard{
+
+    background:#dc2626;
+
+}
+
+/*==================================================
+            CORRECT ANSWER
+==================================================*/
+
+.answer-correct{
+
+    background:#22c55e !important;
+
+    box-shadow:
+
+    0 0 20px #22c55e;
+
+}
+
+/*==================================================
+            WRONG ANSWER
+==================================================*/
+
+.answer-wrong{
+
+    background:#ef4444 !important;
+
+    box-shadow:
+
+    0 0 20px red;
+
+}
+
+/*==================================================
+            LOADING EFFECT
+==================================================*/
+
+.loading{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#090c15;
+
+    z-index:10000;
+
+}
+
+.loading-circle{
+
+    width:80px;
+
+    height:80px;
+
+    border-radius:50%;
+
+    border:8px solid #1f2937;
+
+    border-top-color:cyan;
+
+    animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/*==================================================
+            RESPONSIVE
+==================================================*/
+
+@media(max-width:1200px){
+
+.game-wrapper{
+
+    flex-direction:column;
+
+    padding:25px;
+
+}
+
+.game-character{
+
+    width:220px;
+
+}
+
+.game-main{
+
+    width:100%;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.game-top{
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.question-box h3{
+
+    font-size:21px;
+     color:#ffffff;
+    text-shadow:0 0 10px rgba(0,255,255,.3);
+
+}
+
+.answer-btn{
+
+    font-size:18px;
+
+    padding:15px;
+
+}
+
+.timer-box,
+.level-box,
+.score-box{
+
+    width:100%;
+
+    text-align:center;
+
+}
+
+.game-character{
+
+    width:170px;
+
+}
+
+.code-box{
+
+    font-size:15px;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.game-character{
+
+    display:none;
+
+}
+
+.game-main{
+
+    padding:18px;
+
+}
+
+.question-box h3{
+
+    font-size:18px;
+
+}
+
+.answer-btn{
+
+    font-size:16px;
+
+}
+
+.level-box{
+
+    font-size:18px;
+
+}
+
+.score-box{
+
+    font-size:18px;
+
+}
+
+.timer-box{
+
+    font-size:18px;
+
+}
+
+}
+
+/*==================================================
+            END OF CSS
+==================================================*/
+/* particle */
+
+.particle{
+
+    position:fixed;
+
+    bottom:-20px;
+
+    width:5px;
+
+    height:5px;
+
+    background:cyan;
+
+    border-radius:50%;
+
+    box-shadow:0 0 12px cyan;
+
+    animation:particleFly linear forwards;
+
+    pointer-events:none;
+
+}
+
+@keyframes particleFly{
+
+    from{
+
+        transform:
+
+        translateY(0);
+
+    }
+
+    to{
+
+        transform:
+
+        translateY(-120vh);
+
+    }
+
+}
+/* Import font chữ Gaming / Tech từ Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
+
+/* Định dạng chung cho Text tiêu đề game */
+.animate-glow {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+}
+
+/* =======================================================
+   NÚT BẮT ĐẦU CHƠI / TIẾP TỤC (STYLE ACTION CYBERPUNK)
+   ======================================================= */
+.btn-play, .btn-action-start {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    position: relative;
+    padding: 15px 35px;
+    background: linear-gradient(45deg, #ff0055, #9900ff);
+    color: #ffffff !important;
+    border: none;
+    clip-path: polygon(12% 0, 100% 0, 100% 75%, 88% 100%, 0 100%, 0% 25%); /* Cắt góc kiểu hầm hố */
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+    display: inline-block;
+}
+
+.btn-play:hover, .btn-action-start:hover {
+    background: linear-gradient(45deg, #ff0077, #b133ff);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+    transform: scale(1.05);
+    letter-spacing: 3px;
+}
+
+/* Thêm vệt sáng quét ngang khi Hover */
+.btn-play::after, .btn-action-start::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -50%;
+    width: 30%; height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+    transform: skewX(-25deg);
+    transition: 0.75s;
+}
+
+.btn-play:hover::after, .btn-action-start:hover::after {
+    left: 120%;
+}
+
+/* =======================================================
+   CÁC NÚT ĐÁP ÁN (A, B, C, D) TRONG GAMEPLAY
+   ======================================================= */
+.game-answer-wrapper {
+    margin-bottom: 15px;
+}
+
+.btn-answer-option {
+    font-family: 'Orbitron', sans-serif;
+    width: 100%;
+    padding: 16px 25px;
+    text-align: left;
+    background: rgba(15, 23, 42, 0.8); /* Nền tối hầm hố */
+    color: #00f2fe; /* Chữ neon xanh */
+    border: 2px solid #1e293b;
+    border-left: 5px solid #00f2fe; /* Vạch neon bên trái */
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Trạng thái khi Rê chuột vào lựa chọn đáp án */
+.btn-answer-option:hover {
+    background: rgba(0, 242, 254, 0.1);
+    color: #ffffff;
+    border-color: #00f2fe;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.4), inset 0 0 10px rgba(0, 242, 254, 0.2);
+    transform: translateX(8px); /* Nhích nhẹ sang phải tạo cảm giác phản hồi động */
+}
+
+/* Label chữ cái đầu (A., B., C., D.) nổi bật hẳn lên */
+.btn-answer-option .opt-label {
+    color: #ff0055;
+    font-weight: 900;
+    margin-right: 12px;
+    text-shadow: 0 0 5px rgba(255, 0, 87, 0.5);
+}

@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_block %}
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <!-- LEFT -->
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="profile-card">
+
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}"
+                         class="profile-avatar">
+                {% endif %}
+
+                <div class="profile-name">
+
+                    {{ request.user.get_full_name }}
+
+                </div>
+
+                <div class="profile-email">
+
+                    {{ request.user.email }}
+
+                </div>
+
+                <br>
+
+                <h6>
+
+                    {{ profile.student_id }}
+
+                </h6>
+
+                <div class="stat-box">
+
+                    <div class="stat">
+
+                        <span>📚 Đang mượn</span>
+
+                        <strong>0</strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <span>✅ Đã trả</span>
+
+                        <strong>0</strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <span>🛒 Đã mua</span>
+
+                        <strong>0</strong>
+
+                    </div>
+
+                    <div class="stat">
+
+                        <span>⭐ Thành viên</span>
+
+                        <strong>Thường</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="col-lg-8">
+
+            <div class="form-card">
+
+                <div class="form-header">
+
+                    CẬP NHẬT HỒ SƠ
+
+                </div>
+
+                <div class="form-body">
+
+                    <form method="POST"
+                          enctype="multipart/form-data">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Avatar
+
+                            </label>
+
+                           <input
+        type="file"
+        name="avatar"
+        id="avatarInput"
+        class="form-control"
+        accept="image/*">
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Mã sinh viên
+
+                                </label>
+
+                                {{ form.student_id }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Khoa
+
+                                </label>
+
+                                {{ form.faculty }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Lớp
+
+                                </label>
+
+                                {{ form.class_name }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Giới tính
+
+                                </label>
+
+                                {{ form.gender }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Ngày sinh
+
+                                </label>
+
+                                {{ form.birthday }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Điện thoại
+
+                                </label>
+
+                                {{ form.phone }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Địa chỉ
+
+                            </label>
+
+                            {{ form.address }}
+
+                        </div>
+
+                        <button class="btn btn-primary btn-save">
+
+                            💾 CẬP NHẬT HỒ SƠ
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+const input=document.getElementById("avatarInput");
+
+input.onchange=function(e){
+
+    const file=e.target.files[0];
+
+    if(file){
+
+        document.querySelector(".profile-avatar").src=
+            URL.createObjectURL(file);
+
+    }
+
+}
+
+</script>
+{% endblock %}

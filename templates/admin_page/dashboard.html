@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container py-4">
+<div class="container py-4">
+    <div class="row">
+        <!-- THANH ĐIỀU HƯỚNG BÊN TRÁI -->
+        <div class="col-lg-3 mb-4">
+            <div class="list-group shadow-sm border-0">
+                <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action active fw-bold">
+                    <i class="fas fa-chart-line me-2"></i> Tổng quan Dashboard
+                </a>
+                <a href="{% url 'profile' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user-cog me-2"></i> Cập nhật thông tin
+                </a>
+                <a href="{% url 'books' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-book me-2"></i> Đến kho mượn sách
+                </a>
+            </div>
+        </div>
+
+        <!-- VÙNG HIỂN THỊ SỐ LIỆU BÊN PHẢI -->
+        <div class="col-lg-9">
+            <h4 class="fw-bold text-dark mb-4">CHI TIẾT MƯỢN SÁCH</h4>
+            
+            <!-- Hàng hiển thị các hộp số liệu (Cards) -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card bg-primary text-white border-0 shadow-sm text-center p-3 rounded-3">
+                        <span class="small opacity-75">📖 Đang mượn</span>
+                        <h2 class="fw-bold my-1">{{ total_borrowing }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card bg-success text-white border-0 shadow-sm text-center p-3 rounded-3">
+                        <span class="small opacity-75">✅ Đã trả xong</span>
+                        <h2 class="fw-bold my-1">{{ total_returned }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card bg-warning text-dark border-0 shadow-sm text-center p-3 rounded-3">
+                        <span class="small opacity-75">⏳ Chờ duyệt mượn</span>
+                        <h2 class="fw-bold my-1">{{ total_pending }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card bg-danger text-white border-0 shadow-sm text-center p-3 rounded-3">
+                        <span class="small opacity-75">🚨 Sách quá hạn</span>
+                        <h2 class="fw-bold my-1">{{ total_overdue }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BẢNG CHI TIẾT CÁC CUỐN SÁCH SINH VIÊN ĐANG GIỮ -->
+            <div class="card shadow-sm border-0 rounded-3 bg-white">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h6 class="fw-bold text-dark mb-0"><i class="fas fa-list me-2 text-primary"></i>DANH SÁCH SÁCH ĐANG GIỮ</h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sách</th>
+                                    <th>Ngày mượn</th>
+                                    <th>Hạn trả</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in current_books %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ ticket.book.image.url }}" width="45" height="60" style="object-fit: cover; border-radius: 4px;">
+                                    </td>
+                                    <td><span class="fw-bold">{{ ticket.book.name }}</span></td>
+                                    <td>{{ ticket.borrow_date|date:"d/m/Y" }}</td>
+                                    <td><span class="text-danger fw-bold">{{ ticket.return_deadline|date:"d/m/Y" }}</span></td>
+                                    <td>
+                                        {% if ticket.status == 'borrowing' %}
+                                            <span class="badge bg-primary">Đang giữ sách</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Quá hạn trả</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="fas fa-folder-open mb-2 fs-4 d-block"></i>
+                                        Bạn hiện tại không giữ cuốn sách nào của thư viện.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+    </div>
+{% endblock %}

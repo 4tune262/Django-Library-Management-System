@@ -1,0 +1,12 @@
+/* Ép cột Liên hệ ở giữa tự thu gọn bề ngang vừa vặn để nhường khoảng trống giãn cách đều cho 2 bên */
+@media (min-width: 992px) {
+    .footer class[class*="col-lg-4"]:nth-child(2) {
+        width: max-content !important;
+        min-width: 250px;
+    }
+
+    .footer class[class*="col-lg-4"]:nth-child(3) {
+        width: max-content !important;
+    }
+}
+

@@ -1,0 +1,634 @@
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/all.min.css'%}" />
+    <link rel="stylesheet" href="https://cloudflare.com" />
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+        <!-- ĐÃ CẬP NHẬT: Dùng CDN JSDelivr chuẩn quốc tế, đảm bảo nạp được thư viện 100% -->
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <!-- Giữ nguyên các dòng link CSS cũ của bạn... -->
+    <title>{{title}}</title>
+</head>
+{#{% if messages %}#}
+{##}
+{#<div class="toast-container position-fixed top-0 end-0 p-3">#}
+{##}
+{#{% for message in messages %}#}
+{##}
+{#<div#}
+{#class="toast show text-bg-success border-0 mb-2">#}
+{##}
+{#<div class="d-flex">#}
+{##}
+{#<div class="toast-body">#}
+{##}
+{#{{ message }}#}
+{##}
+{#</div>#}
+{##}
+{#<button#}
+{#type="button"#}
+{#class="btn-close btn-close-white me-2 m-auto"#}
+{#data-bs-dismiss="toast">#}
+{#</button>#}
+{##}
+{#</div>#}
+{##}
+{#</div>#}
+{##}
+{#{% endfor %}#}
+{##}
+{#</div>#}
+{##}
+{#{% endif %}#}
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BỔ SUNG CLASSnavbar-top-custom VÀO ĐÂY ĐỂ ĐỊNH DANH -->
+                <nav class="navbar navbar-expand-lg bg-white my-3 rounded border navbar-top-custom"
+                    style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="/"><img src="{% static 'img/logo-stu.png'%}" alt="Logo-stu" height="50"></a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center" style="gap: 1.5rem;">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/about">Giới thiệu</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        Qui định
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Action</a></li>
+                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Tin tức</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">FAQs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/books">Sách</a>
+                                </li>
+                            <li class="nav-item">
+
+<a href="{% url 'view_cart' %}"
+class="btn btn-outline-primary position-relative">
+
+<i class="fas fa-shopping-cart me-1"></i>
+
+Giỏ hàng
+
+{% if cart_count > 0 %}
+
+<span
+class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+{{ cart_count }}
+
+</span>
+
+{% endif %}
+
+</a>
+
+</li>
+                                <li class="nav-item">
+                                    <!-- Đã thêm class định danh user-link-avatar để không bị ăn viền bầu dục của chữ -->
+{#                                    <a class="nav-link user-link-avatar" href="{% url 'register' %}">#}
+{#                                        <!-- Đã thêm class user-avatar-circle để xử lý hiệu ứng hover tròn xoe tại đây -->#}
+{#                                        <div class="d-inline-flex align-items-center justify-content-center border rounded-circle bg-light-subtle shadow-sm user-avatar-circle"#}
+{#                                            style="width: 38px; height: 38px; cursor: pointer;">#}
+{#                                            <svg xmlns="http://w3.org" viewBox="0 0 448 512"#}
+{#                                                style="width: 16px; height: 16px; fill: #003d99;">#}
+{#                                                <path#}
+{#                                                    d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z" />#}
+{#                                            </svg>#}
+{#                                        </div>#}
+{#                                    </a>#}
+                                    {% if user.is_authenticated %}
+
+<li class="nav-item dropdown">
+
+<a class="nav-link dropdown-toggle"
+href="#"
+data-bs-toggle="dropdown">
+
+{{ user.username }}
+
+</a>
+
+<ul class="dropdown-menu dropdown-menu-end">
+
+{% if user.is_staff %}
+
+<li>
+
+<a class="dropdown-item"
+href="/admin/">
+
+Quản trị
+
+</a>
+
+</li>
+
+{% endif %}
+
+<li>
+
+<a class="dropdown-item"
+href="{% url 'profile' %}">
+
+Hồ sơ cá nhân
+
+</a>
+
+</li>
+<li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard cá nhân</a></li>
+<li>
+
+<hr class="dropdown-divider">
+
+</li>
+
+<li>
+
+<a class="dropdown-item"
+href="{% url 'logout' %}">
+
+Đăng xuất
+
+</a>
+
+</li>
+
+</ul>
+
+</li>
+
+{% else %}
+
+<li class="nav-item">
+
+<a class="btn btn-outline-primary me-2"
+href="{% url 'login' %}">
+
+Đăng nhập
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a class="btn btn-primary"
+href="{% url 'register' %}">
+
+Đăng ký
+
+</a>
+
+</li>
+
+{% endif %}
+                                    </li>
+                                <li class="nav-item dropdown">
+
+<a class="nav-link dropdown-toggle"
+
+data-bs-toggle="dropdown"
+
+href="#">
+
+🎮 Game
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+
+<a class="dropdown-item"
+
+href="{% url 'game_home' %}">
+
+Lập trình C++
+
+</a>
+
+</li>
+    <li>
+            <a class="dropdown-item py-2 text-warning" href="{% url 'pointer_game_home' %}">
+                <i class="fas fa-car-side text-danger"></i> Đua Xe Con Trỏ GT3
+            </a>
+        </li>
+
+</ul>
+
+</li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+{% if messages %}
+
+<div class="container mt-3">
+
+{% for message in messages %}
+
+<div class="alert alert-{{ message.tags }}">
+
+{{ message }}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+                <!-- THANH PHỤ DƯỚI NAVBAR (SUB-HEADER) -->
+                <div class="py-2 px-3"
+                    style="background-color: #003d99; border-top-left-radius: 8px; border-top-right-radius: 8px; margin-top: 5px;">
+                    <div class="container-fluid d-flex justify-content-between align-items-center flex-nowrap text-white"
+                        style="font-family: Arial, sans-serif; font-size: 14px;">
+                        <div class="d-flex align-items-center gap-4">
+                            <!-- Email -->
+                            <div class="d-flex align-items-center gap-2">
+                                <svg xmlns="http://w3.org" viewBox="0 0 512 512" fill="currentColor"
+                                    style="width: 18px; height: 18px;">
+                                    <path
+                                        d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z" />
+                                </svg>
+                                <span> lib@stu.edu.vn</span>
+                            </div>
+
+                            <!-- Số điện thoại -->
+                            <div class="d-flex align-items-center gap-2">
+                                <svg xmlns="http://w3.org" viewBox="0 0 448 512" fill="currentColor"
+                                    style="width: 18px; height: 18px;">
+                                    <path
+                                        d="M224 64c-79 0-144.7 57.3-157.7 132.7 9.3-3 19.3-4.7 29.7-4.7l16 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-16 0c-53 0-96-43-96-96l0-64C0 100.3 100.3 0 224 0S448 100.3 448 224l0 168.1c0 66.3-53.8 120-120.1 120l-87.9-.1-32 0c-26.5 0-48-21.5-48-48s21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 0 40 0c39.8 0 72-32.2 72-72l0-20.9c-14.1 8.2-30.5 12.8-48 12.8l-16 0c-26.5 0-48-21.5-48-48l0-96c0-26.5 21.5-48 48-48l16 0c10.4 0 20.3 1.6 29.7 4.7-13-75.3-78.6-132.7-157.7-132.7z" />
+                                </svg>
+                                <span>02838505520</span>
+                            </div>
+                        </div>
+                           <!-- KHU VỰC TÌM KIẾM (BÊN PHẢI) -->
+                       <div class="position-relative" style="width:280px;">
+
+    <input
+        id="searchInput"
+        class="form-control form-control-sm rounded-pill bg-transparent text-white pe-5"
+        placeholder="Tìm sách..."
+        autocomplete="off"
+        style="border:1px solid white;color:white;">
+
+    <i class="fas fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-white"></i>
+
+    <div
+        id="searchResult"
+        class="list-group position-absolute w-100 mt-1 shadow"
+        style="
+            z-index:9999;
+            display:none;
+            max-height:400px;
+            overflow-y:auto;">
+    </div>
+
+</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+  <div class="container my-4">
+        {% block content %}
+        <!-- Dữ liệu của dashboard, danh sách sách... sẽ tự động nhảy vào đây -->
+        {% endblock %}
+    </div>
+   {% block body_block %}
+    {% endblock %}
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+
+                <!-- FOOTER CONTAINER-FLUID NẰM TRONG COL-MD-12 -->
+                <footer class="container-fluid text-white py-5 px-4 rounded-3"
+                    style="background-color: #003d99; font-family: Arial, sans-serif; font-size: 14px;">
+
+                    <!-- BẬT SUB-GRID VỚI CLASS 'justify-content-between' ĐỂ ĐẨY CÁC CỘT CÁCH ĐỀU NHAU -->
+                    <div class="row g-4 justify-content-between">
+
+                        <!-- CỘT 1: THÔNG TIN CÁC CƠ SỞ -->
+                        <div class="col-lg-4 col-md-12">
+                            <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                <svg xmlns="http://w3.org" viewBox="0 0 384 512" fill="white"
+                                    style="width: 18px; height: 18px;">
+                                    <path
+                                        d="M0 188.6C0 84.4 86 0 192 0S384 84.4 384 188.6c0 119.3-120.2 262.3-170.4 316.8-11.8 12.8-31.5 12.8-43.3 0-50.2-54.5-170.4-197.5-170.4-316.8zM192 256a64 64 0 1 0 0-128 64 64 0 1 0 0 128z" />
+                                </svg>
+                                Cơ sở thư viện
+                            </h6>
+                            <div class="mb-4">
+                                <p class="mb-2 ms-2 text-white-50 lh-base">
+                                    180 Cao Lỗ, Phường 4, Quận 8, Hồ Chí Minh, Việt Nam
+                                </p>
+                                <!-- Sơ đồ thu nhỏ -->
+                                <div class="ms-2 mt-2 border rounded overflow-hidden"
+                                    style="max-width: 100%; width: 350px; height: 200px; background: #eee;">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.9544107791344!2d106.67296654914456!3d10.73799716218236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f62a90e5dbd%3A0x674d5126513db295!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBDw7RuZyBuZ2jhu4cgU8OgaSBHw7Ju!5e0!3m2!1svi!2s!4v1780224254273!5m2!1svi!2s"
+                                        width="350" height="200" style="border:0;" allowfullscreen="" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- CỘT 2: LIÊN HỆ THƯ VIỆN & MXH -->
+                        <div class="col-lg-3 col-md-6">
+                            <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                Liên hệ thư viện
+                            </h6>
+
+                            <ul class="list-unstyled d-flex flex-column gap-3 ms-2">
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 512 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z" />
+                                    </svg>
+                                    <a href="mailto:lib@stu.edu.vn" class="text-white text-decoration-underline">
+                                        Email: lib@stu.edu.vn</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2 text-white-50">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 512 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M160.2 25C152.3 6.1 131.7-3.9 112.1 1.4l-5.5 1.5c-64.6 17.6-119.8 80.2-103.7 156.4 37.1 175 174.8 312.7 349.8 349.8 76.3 16.2 138.8-39.1 156.4-103.7l1.5-5.5c5.4-19.7-4.7-40.3-23.5-48.1l-97.3-40.5c-16.5-6.9-35.6-2.1-47 11.8l-38.6 47.2C233.9 335.4 177.3 277 144.8 205.3L189 169.3c13.9-11.3 18.6-30.4 11.8-47L160.2 25z" />
+                                    </svg>
+                                    <span>Điện thoại: (028) 38 505 520 Ext: 347</span>
+                                </li>
+                                <li class="d-flex align-items-center gap-2 text-white-50">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 512 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M160 64l0 80 64 0 0-80 146.7 0 45.3 45.3 0 34.7 64 0 0-34.7c0-17-6.7-33.3-18.7-45.3L416 18.7C404 6.7 387.7 0 370.7 0L224 0c-35.3 0-64 28.7-64 64zM32 128c-17.7 0-32 14.3-32 32L0 448c0 17.7 14.3 32 32 32l48 0c17.7 0 32-14.3 32-32l0-288c0-17.7-14.3-32-32-32l-48 0zm448 64l-320 0 0 256c0 17.7 14.3 32 32 32l288 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32zM224 288a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm0 96a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM336 264a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM312 384a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM424 264a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM400 384a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z" />
+                                    </svg>
+                                    <span>Fax: (84.8) 3850 6595</span>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 320 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-underline">STU Library</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 448 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M224.3 141a115 115 0 1 0 -.6 230 115 115 0 1 0 .6-230zm-.6 40.4a74.6 74.6 0 1 1 .6 149.2 74.6 74.6 0 1 1 -.6-149.2zm93.4-45.1a26.8 26.8 0 1 1 53.6 0 26.8 26.8 0 1 1 -53.6 0zm129.7 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM399 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-underline">STU Library</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 576 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M549.7 124.1C543.5 100.4 524.9 81.8 501.4 75.5 458.9 64 288.1 64 288.1 64S117.3 64 74.7 75.5C51.2 81.8 32.7 100.4 26.4 124.1 15 167 15 256.4 15 256.4s0 89.4 11.4 132.3c6.3 23.6 24.8 41.5 48.3 47.8 42.6 11.5 213.4 11.5 213.4 11.5s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zM232.2 337.6l0-162.4 142.7 81.2-142.7 81.2z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-underline">Youtube</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- CỘT 3: ĐIỀU HƯỚNG LIÊN KẾT NHANH (QUY ĐỊNH) -->
+                        <div class="col-lg-3 col-md-6">
+                            <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                Quy định &amp; Liên kết
+                            </h6>
+
+                            <ul class="list-unstyled d-flex flex-column gap-3 ms-2">
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Quy định
+                                        thư
+                                        viện</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Thời
+                                        gian mở
+                                        cửa</a>
+                                </li>
+                                <li class="col-12 d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Không
+                                        gian thư
+                                        viện</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Hướng
+                                        dẫn sử
+                                        dụng thư viện</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Các thư
+                                        viện
+                                        thành viên</a>
+                                </li>
+                                <li class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://w3.org" viewBox="0 0 256 512" fill="white"
+                                        style="width: 14px; height: 14px;">
+                                        <path
+                                            d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                    </svg>
+                                    <a href="#" class="text-white text-decoration-none hover-underline">Các liên
+                                        kết
+                                        khác</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div> <!-- Đóng row phụ bên trong -->
+                </footer> <!-- Đóng footer -->
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
+<script>
+
+const input=document.getElementById("searchInput");
+
+const result=document.getElementById("searchResult");
+
+input.addEventListener("keyup",function(){
+
+    let keyword=this.value.trim();
+
+    if(keyword.length<2){
+
+        result.style.display="none";
+
+        return;
+
+    }
+
+    fetch("/search-books/?q="+keyword)
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        result.innerHTML="";
+
+        if(data.length==0){
+
+            result.innerHTML=`
+            <div class="list-group-item">
+                Không tìm thấy sách
+            </div>
+            `;
+
+            result.style.display="block";
+
+            return;
+
+        }
+
+        data.forEach(book=>{
+
+            result.innerHTML+=`
+
+<a href="/book/${book.id}/"
+
+class="list-group-item list-group-item-action">
+
+<div class="d-flex">
+
+<img
+src="${book.image}"
+style="
+width:55px;
+height:70px;
+object-fit:cover;
+border-radius:6px;">
+
+<div class="ms-3">
+
+<div class="fw-bold">
+
+${book.name}
+
+</div>
+
+<small>
+
+${book.author}
+
+</small>
+
+<br>
+
+<span class="text-danger fw-bold">
+
+${book.price} đ
+
+</span>
+
+</div>
+
+</div>
+
+</a>
+
+`;
+
+        });
+
+        result.style.display="block";
+
+    });
+
+});
+
+document.addEventListener("click",function(e){
+
+    if(!document.getElementById("searchInput").contains(e.target)
+    &&
+    !document.getElementById("searchResult").contains(e.target)){
+
+        result.style.display="none";
+
+    }
+
+});
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+
+<script>
+
+hljs.highlightAll();
+
+</script>
+</body>
+
+</html>

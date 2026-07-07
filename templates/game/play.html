@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+<!-- Google Fonts: Nhúng font chữ kỹ thuật số chuyên dụng cho game Cyberpunk -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'game/css/game.css' %}">
+
+<style>
+    /* ==========================================================================
+       CYBERPUNK CORE STYLE SYSTEM (TƯƠNG THÍCH HOÀN TOÀN CẤU TRÚC CŨ)
+       ========================================================================== */
+    :root {
+        --neon-cyan: #00f2fe;
+        --neon-pink: #ff007f;
+        --neon-green: #39ff14;
+        --dark-bg: #050515;
+        --cyber-glass: rgba(10, 10, 30, 0.75);
+    }
+
+    /* Tạo nền lưới ma trận chuyển động vô hạn phía sau */
+    .game-bg {
+        background-color: var(--dark-bg);
+        background-image:
+            linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-position: center top;
+        animation: gridMove 20s linear infinite;
+        font-family: 'Share Tech Mono', monospace;
+        min-height: 100vh;
+        padding-bottom: 50px;
+        position: relative;
+        overflow-x: hidden;
+    }
+    @keyframes gridMove {
+        from { background-position: 0 0; }
+        to { background-position: 0 100%; }
+    }
+
+    /* Khối kính mờ cao cấp cho thanh điều hướng và khung nội dung */
+    .game-header, .game-character, .game-main {
+        background: var(--cyber-glass) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 242, 254, 0.2) !important;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.05);
+        border-radius: 12px;
+    }
+
+    .game-header {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 2px solid var(--neon-cyan) !important;
+        box-shadow: 0 4px 20px rgba(0, 242, 254, 0.15);
+    }
+
+    /* Định dạng chữ Kỹ thuật số tương lai */
+    .level-box, .score-box, .timer-box, .btn-play, h3, h4 {
+        font-family: 'Orbitron', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Thiết kế các Level Badge */
+    .level-box {
+        font-size: 20px;
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    .level-box span { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+
+    /* Khối điểm số và đồng hồ dạng LED */
+    .score-box, .timer-box {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--neon-pink);
+        padding: 8px 16px;
+        border-radius: 6px;
+        display: inline-block;
+        box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+    }
+    .score-box div:first-child, .timer-box { color: rgba(255, 255, 255, 0.6); font-size: 12px; }
+    #scoreText, #timer {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--neon-pink);
+        text-shadow: 0 0 12px var(--neon-pink);
+    }
+    #timer { color: var(--neon-green); text-shadow: 0 0 12px var(--neon-green); }
+
+    /* Khối mã nguồn đen sâu kết hợp viền công nghệ */
+    .code-box, pre {
+        background: #020208 !important;
+        border-left: 4px solid var(--neon-cyan) !important;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+        border-radius: 6px;
+        padding: 15px;
+    }
+
+    /* Các nút lựa chọn Trắc nghiệm độc bản */
+    .answer-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .answer-btn:hover {
+        background: rgba(0, 242, 254, 0.08) !important;
+        border-color: var(--neon-cyan) !important;
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        transform: translateX(5px);
+    }
+    .answer-btn input[type="radio"]:checked + text,
+    .answer-btn:has(input[type="radio"]:checked) {
+        background: rgba(255, 0, 127, 0.1) !important;
+        border-color: var(--neon-pink) !important;
+        box-shadow: 0 0 20px rgba(ff, 0, 127, 0.3);
+        color: var(--neon-pink) !important;
+        font-weight: bold;
+    }
+
+    /* Các khối kéo thả linh hoạt */
+    .drag-item {
+        background: rgba(0, 242, 254, 0.1) !important;
+        border: 1px solid var(--neon-cyan) !important;
+        color: #fff !important;
+        box-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
+        font-weight: bold;
+        transition: all 0.2s ease;
+    }
+    .drag-item:hover {
+        background: var(--neon-cyan) !important;
+        color: #000 !important;
+        box-shadow: 0 0 15px var(--neon-cyan);
+        transform: scale(1.03);
+    }
+
+    /* Ô trống nhận diện kéo thả siêu thực */
+    .drop-zone {
+        min-width: 120px;
+        height: 35px;
+        background: rgba(0, 0, 0, 0.5) !important;
+        border: 2px dashed var(--neon-cyan) !important;
+        box-shadow: inset 0 0 8px rgba(0, 242, 254, 0.2);
+    }
+
+    /* Hiệu ứng phát sáng đỉnh cao khi thả trúng ô */
+    .cyber-glow {
+        animation: neonGlow 1s ease-in-out infinite alternate;
+        background: var(--neon-green) !important;
+        color: #000 !important;
+        box-shadow: 0 0 15px var(--neon-green), 0 0 30px var(--neon-green) !important;
+        border: 2px solid #fff !important;
+    }
+    @keyframes neonGlow {
+        from { box-shadow: 0 0 8px var(--neon-green); }
+        to { box-shadow: 0 0 20px var(--neon-green), 0 0 30px #ffffff; }
+    }
+
+    /* Khung chứa các cột sắp xếp lệnh */
+    .sort-container-box {
+        min-height: 340px;
+        background: rgba(5, 5, 10, 0.8) !important;
+        border: 1px dashed rgba(0, 242, 254, 0.3) !important;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Nút kích hoạt lệnh Nộp bài tối thượng */
+    .btn-play {
+        background: linear-gradient(45deg, var(--neon-pink), #bc00dd);
+        color: white;
+        border: none;
+        padding: 14px 40px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 4px;
+        box-shadow: 0 0 15px var(--neon-pink);
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+    }
+    .btn-play:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 0 30px var(--neon-pink), 0 0 10px #ffffff;
+        background: linear-gradient(45deg, #bc00dd, var(--neon-pink));
+    }
+
+    /* Thanh tiến độ công nghệ */
+    .progress-wrapper {
+        background: rgba(255, 255, 255, 0.05);
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+    }
+    .progress-bar {
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink)) !important;
+        box-shadow: 0 0 10px var(--neon-cyan);
+        height: 100%;
+        transition: width 0.4s ease;
+    }
+</style>
+
+<div class="game-bg">
+    <!-- ================= HEADER PROFILE GAME ================= -->
+    <div class="container-fluid px-4">
+        <div class="row game-header align-items-center py-3 mb-4">
+            <div class="col-md-3">
+                <img id="animeCharacter" src="{% static 'game/img/logogame.png' %}" class="anime-img" style="width:110px; filter:drop-shadow(0 0 15px var(--neon-cyan));">
+            </div>
+            <div class="col-md-6 text-center">
+                <div class="level-box {{ question.level }}">
+                    ARENA STAGE: <span>{{ question.level|upper }}</span>
+                </div>
+            </div>
+            <div class="col-md-3 text-end d-flex justify-content-end gap-3 align-items-center">
+                <div class="score-box">
+                    <div>TOTAL SCORE</div>
+                    <div id="scoreText">{{ score_earned }}</div>
+                </div>
+                <div class="timer-box">
+                    SYSTEM TIME <span id="timer">60</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN ARENA BODY ================= -->
+    <div class="container-fluid px-4 mt-2">
+        <div class="row g-4">
+            <!-- Cột trái: Mentor hướng dẫn -->
+            <div class="col-lg-3">
+                <div class="game-character text-center p-4">
+                    <img src="{% static 'game/img/anime.png' %}" class="anime-big" id="anime" style="width:200px; filter: drop-shadow(0 0 15px rgba(0,242,254,0.3));">
+                    <h4 class="text-info mt-3" style="text-shadow: 0 0 8px rgba(0,242,254,0.5);">C++ Sensei</h4>
+                    <div style="border-bottom: 1px solid rgba(0,242,254,0.2); width:50%; margin:10px auto;"></div>
+                    <p class="text-light small" style="line-height: 1.6; color: #a0aec0 !important;">
+                        {% if question.question_type == 'multiple_choice' %}
+                            Hệ thống đã nạp mã nguồn. Chọn phương án giải mã chính xác nhất bên dưới!
+                        {% elif question.question_type == 'drag_drop_blank' %}
+                            Nhấp giữ và kéo các khối từ khóa thả chính xác vào phân vùng dữ liệu trống!
+                        {% else %}
+                            Cấu trúc thuật toán đang bị xáo trộn. Kéo sắp xếp lại các dòng lệnh sang cột phải!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cột phải: Khối hiển thị đề bài và lựa chọn thao tác -->
+            <div class="col-lg-9">
+                <div class="game-main p-4 text-white">
+                    <form method="post" id="arenaMainForm">
+                        {% csrf_token %}
+                        <!-- Trường input ẩn lưu giá trị chuỗi kéo thả truyền ngược lên views.py -->
+                        <input type="hidden" name="custom_answer" id="customAnswerHiddenField">
+
+                        <div class="question-box">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-dark border border-info text-info px-3 py-2" style="font-size:12px; font-family:'Orbitron';">QUESTION {{ index }} / {{ total_q }}</span>
+                            </div>
+                            <h3 class="text-white mb-4" style="font-size:22px; border-left: 4px solid var(--neon-pink); padding-left: 15px;">{{ question.title }}</h3>
+
+                            <!-- PHÂN VÙNG 1: HIỂN THỊ DẠNG TRẮC NGHIỆM TRUYỀN THỐNG -->
+                            {% if question.question_type == 'multiple_choice' %}
+                                <pre class="code-box"><code class="language-cpp">{{ question.code }}</code></pre>
+                                <div class="mt-4">
+                                    <label class="answer-btn d-block mb-3 p-3 rounded text-white" style="cursor: pointer;">
+                                        <input type="radio" name="answer" value="A" required> <span style="color:var(--neon-cyan); margin-right:8px;">A.</span> {{ question.option_a }}
+                                    </label>
+                                    <label class="answer-btn d-block mb-3 p-3 rounded text-white" style="cursor: pointer;">
+                                        <input type="radio" name="answer" value="B"> <span style="color:var(--neon-cyan); margin-right:8px;">B.</span> {{ question.option_b }}
+                                    </label>
+                                    <label class="answer-btn d-block mb-3 p-3 rounded text-white" style="cursor: pointer;">
+                                        <input type="radio" name="answer" value="C"> <span style="color:var(--neon-cyan); margin-right:8px;">C.</span> {{ question.option_c }}
+                                    </label>
+                                    <label class="answer-btn d-block mb-4 p-3 rounded text-white" style="cursor: pointer;">
+                                        <input type="radio" name="answer" value="D"> <span style="color:var(--neon-cyan); margin-right:8px;">D.</span> {{ question.option_d }}
+                                    </label>
+                                </div>
+
+                            <!-- PHÂN VÙNG 2: HIỂN THỊ DẠNG MEDIUM (KÉO THẢ VÀO Ô TRỐNG) -->
+                            {% elif question.question_type == 'drag_drop_blank' %}
+                                <div class="p-4 rounded-3 mb-4" style="background:#020208; border:1px solid rgba(0, 242, 254, 0.2);">
+                                    <h6 class="text-info mb-3" style="font-family:'Orbitron';"><i class="fas fa-terminal"></i> CORE_SOURCE_CODE:</h6>
+                                    <pre style="font-size:16px; font-family: 'Courier New', monospace; line-height:2.5; color:#f8f8f2;">{{ question.code|safe }}</pre>
+                                </div>
+
+                                <div class="p-3 rounded-3 mb-4" style="background:rgba(0, 242, 254, 0.02); border:1px dashed var(--neon-cyan);">
+                                    <h6 class="text-warning mb-3" style="font-family:'Orbitron';"><i class="fas fa-cubes"></i> AVAILABLE_DATA_MODULES:</h6>
+                                    <div id="poolAnswersContainer" class="d-flex flex-wrap gap-2 py-2">
+                                        <!-- Danh sách thẻ lựa chọn tự động sinh ra bởi mã JavaScript phía dưới -->
+                                    </div>
+                                </div>
+
+                            <!-- PHÂN VÙNG 3: HIỂN THỊ DẠNG HARD (SẮP XẾP DÒNG CODE) -->
+                            {% elif question.question_type == 'sort_code' %}
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <h6 class="text-warning mb-2" style="font-family:'Orbitron';"><i class="fas fa-bars"></i> SHUFFLED_BUFFER (LEFT)</h6>
+                                        <div id="hardLeftSortBox" class="sort-container-box d-flex flex-column gap-2 p-3 rounded">
+                                            <!-- Tự động kết xuất các dòng lệnh xáo trộn -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-success mb-2" style="font-family:'Orbitron';"><i class="fas fa-check-square"></i> EXECUTION_FLOW (RIGHT)</h6>
+                                        <div id="hardRightSortBox" class="sort-container-box d-flex flex-column gap-2 p-3 rounded" style="border: 2px dashed var(--neon-green) !important;">
+                                            <!-- Người dùng sẽ kéo các phần tử thả vào đây theo thứ tự từ trên xuống -->
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Thanh hiển thị tiến trình -->
+                        <div class="progress-wrapper mt-5">
+                            <div class="progress-bar" id="progressBar" style="width: {% widthratio index total_q 100 %}%;"></div>
+                        </div>
+
+                        <div class="text-center mt-5">
+                            <button class="btn-play" type="submit" id="btnSubmitGame">EXECUTE DETONATE_</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'game/js/game.js' %}"></script>
+
+<!-- ================= JAVASCRIPT ĐIỀU KHIỂN KÉO THẢ VÀ HIỆU ỨNG CYBER ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ---- THỰC THI LOGIC KÉO THẢ MÀN MEDIUM ----
+    {% if question.question_type == 'drag_drop_blank' %}
+        const poolRawText = "{{ question.pool_answers|escapejs }}";
+        const poolItems = poolRawText.split(",").map(s => s.trim()).filter(s => s.length > 0);
+        const containerPool = document.getElementById("poolAnswersContainer");
+
+        poolItems.forEach((text, index) => {
+            let item = document.createElement("div");
+            item.className = "drag-item px-3 py-2 rounded";
+            item.draggable = true;
+            item.innerText = text;
+            item.id = "medium_drag_" + index;
+
+            item.addEventListener("dragstart", function(e) {
+                e.dataTransfer.setData("text/plain", e.target.id);
+            });
+            containerPool.appendChild(item);
+        });
+
+        const zones = document.querySelectorAll(".drop-zone");
+        zones.forEach(zone => {
+            zone.addEventListener("dragover", function(e) {
+                e.preventDefault();
+            });
+
+            zone.addEventListener("drop", function(e) {
+                e.preventDefault();
+                const sourceId = e.dataTransfer.getData("text/plain");
+                const draggedElement = document.getElementById(sourceId);
+                if (draggedElement) {
+                    zone.innerText = draggedElement.innerText;
+                    zone.style.color = "#000";
+                    zone.classList.add("cyber-glow");
+                }
+            });
+        });
+
+        document.getElementById("arenaMainForm").addEventListener("submit", function(e) {
+            let userAnswersList = [];
+            document.querySelectorAll(".drop-zone").forEach(zone => {
+                userAnswersList.push(zone.innerText.trim());
+            });
+            document.getElementById("customAnswerHiddenField").value = userAnswersList.join(",");
+        });
+    {% endif %}
+
+
+    // ---- THỰC THI LOGIC KÉO THẢ MÀN HARD ----
+    {% if question.question_type == 'sort_code' %}
+        const shuffledRawText = "{{ question.shuffled_lines|escapejs }}";
+        const linesItems = shuffledRawText.split("||").map(s => s.trim()).filter(s => s.length > 0);
+        const leftContainer = document.getElementById("hardLeftSortBox");
+        const rightContainer = document.getElementById("hardRightSortBox");
+
+        linesItems.forEach((lineText, index) => {
+            let lineRow = document.createElement("div");
+            lineRow.className = "drag-item d-flex align-items-center justify-content-between px-3 py-2 rounded";
+            lineRow.style.width = "100%";
+            lineRow.draggable = true;
+            lineRow.innerText = lineText;
+            lineRow.id = "hard_drag_line_" + index;
+
+            lineRow.addEventListener("dragstart", function(e) {
+                e.dataTransfer.setData("text/plain", e.target.id);
+            });
+            leftContainer.appendChild(lineRow);
+        });
+
+        [leftContainer, rightContainer].forEach(targetBox => {
+            targetBox.addEventListener("dragover", function(e) {
+                e.preventDefault();
+            });
+
+            targetBox.addEventListener("drop", function(e) {
+                e.preventDefault();
+                const sourceId = e.dataTransfer.getData("text/plain");
+                const draggedElement = document.getElementById(sourceId);
+                if (draggedElement) {
+                    targetBox.appendChild(draggedElement);
+                }
+            });
+        });
+
+        document.getElementById("arenaMainForm").addEventListener("submit", function(e) {
+            let finalSortedLines = [];
+            rightContainer.querySelectorAll(".drag-item").forEach(item => {
+                finalSortedLines.push(item.innerText.trim());
+            });
+            document.getElementById("customAnswerHiddenField").value = finalSortedLines.join("||");
+        });
+    {% endif %}
+});
+</script>
+{% endblock %}

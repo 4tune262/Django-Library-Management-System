@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_block %}
+<div class="container">
+        <div class="row">
+            <div class="col-md-12">
+
+                <!-- ========================================== SECTION 1: HERO BANNER (JS ĐIỀU KHIỂN) ========================================== -->
+                <div
+                    class="border border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;  overflow-hidden mb-4 custom-banner-container position-relative">
+
+                    <!-- Slide 1 (Active) -->
+                    <div class="hero-slide active h-100">
+                        <img src="{% static 'img/banner-b-1.webp' %}" alt="Banner 1" class="w-100 h-100" style="object-fit: fill;">
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="hero-slide h-100">
+                        <img src="{% static 'img/banner-b-2.webp' %}" alt="Banner 2" class="w-100 h-100" style="object-fit: fill;">
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="hero-slide h-100">
+                        <img src="{% static 'img/banner-b-3.jpg' %}" alt="Banner 3" class="w-100 h-100" style="object-fit: fill;">
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="hero-slide h-100">
+                        <img src="{% static 'img/banner-b-4.jpg' %}" alt="Banner 4" class="w-100 h-100" style="object-fit: fill;">
+                    </div>
+
+                    <!-- Các chấm tròn hiển thị vị trí (Indicators) -->
+                    <div
+                        class="custom-indicators-wrapper position-absolute bottom-0 start-50 translate-middle-x mb-2 d-flex gap-2">
+                        <span class="custom-dot active"></span>
+                        <span class="custom-dot"></span>
+                        <span class="custom-dot"></span>
+                        <span class="custom-dot"></span>
+                    </div>
+                </div>
+                <!-- ============= SECTION 2: SEARCH AREA & NEW BOOKS ============= -->
+                <div class="row g-3">
+                    <!-- KHU VỰC TÌM KIẾM (BÊN TRÁI) -->
+                    <div class="col-lg-8 col-md-12">
+{#                        <div class="p-3 h-100 rounded-3 border custom-search-container">#}
+{#                            <!-- Hệ thống nút bấm chọn Tab tìm kiếm -->#}
+{#                            <div class="d-flex gap-1 mb-3">#}
+{#                                <button class="btn btn-sm px-3 text-white fw-bold rounded-0 custom-btn-search-active">#}
+{#                                    Tất cả các nguồn#}
+{#                                </button>#}
+{#                                <button class="btn btn-sm px-3 fw-bold rounded-0 border-0 custom-btn-search-inactive">#}
+{#                                    Mục lục HTTV#}
+{#                                </button>#}
+{#                            </div>#}
+{##}
+{#                            <hr class="text-muted my-3 opacity-25">#}
+{##}
+{#                            <!-- Ô Nhập Liệu và Nút Bấm Tìm Kiếm -->#}
+{#                            <div class="row g-2 align-items-center mt-2">#}
+{#                                <div class="col">#}
+{#                                    <input type="text" class="form-control border-secondary-subtle py-2 px-3 fs-6"#}
+{#                                        placeholder="Tìm kiếm tất cả các nguồn">#}
+{#                                </div>#}
+{#                                <div class="col-auto">#}
+{#                                    <button class="btn text-white px-4 py-2 fw-bold custom-btn-submit">Tìm</button>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <!-- KHU VỰC TÌM KIẾM (TRANG INDEX.HTML) -->
+<div class="p-3 h-100 rounded-3 border custom-search-container bg-white shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex gap-1">
+            <button class="btn btn-sm px-3 text-white fw-bold rounded-0 custom-btn-search-active">
+                Tất cả các nguồn
+            </button>
+        </div>
+        <!-- NÚT BẤM KÍCH HOẠT CAMERA QUÉT MÃ QR -->
+        <button type="button" class="btn btn-sm btn-outline-danger fw-bold d-flex align-items-center gap-2" onclick="startQRScanner()">
+            <i class="fas fa-qrcode"></i> Quét QR Sách bằng Camera
+        </button>
+    </div>
+
+    <!-- VÙNG CAMERA HIỂN THỊ QUÉT MÃ QR (MẶC ĐỊNH SẼ ẨN, BẤM NÚT MỚI HIỆN) -->
+    <div id="qr-reader-container" class="mb-3 d-none border rounded p-3 bg-light text-center">
+        <h6 class="fw-bold text-dark"><i class="fas fa-camera me-2"></i>Đang mở Camera quét mã...</h6>
+        <p class="small text-muted">Vui lòng đưa mã QR của cuốn sách ra trước ống kính camera laptop của bạn</p>
+        <div id="qr-reader" class="mx-auto" style="max-width: 400px; border-radius: 8px; overflow: hidden;"></div>
+        <button type="button" class="btn btn-sm btn-secondary mt-3 px-4" onclick="stopQRScanner()">Đóng Camera</button>
+    </div>
+
+    <hr class="text-muted my-3 opacity-25">
+
+    <!-- Ô Nhập Liệu và Nút Bấm Tìm Kiếm Thường -->
+    <form action="{% url 'books' %}" method="GET" class="row g-2 align-items-center mt-2">
+        <div class="col">
+            <input type="text" name="q" class="form-control border-secondary-subtle py-2 px-3 fs-6"
+                placeholder="Tìm kiếm bằng cách nhập từ khóa thông thường...">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn text-white px-4 py-2 fw-bold custom-btn-submit">Tìm</button>
+        </div>
+    </form>
+</div>
+                    </div>
+
+                    <!-- KHU VỰC SÁCH MỚI (BÊN PHẢI) -->
+                    <div class="col-lg-4 col-md-12">
+                        <div class="p-3 h-100 rounded-3 bg-white position-relative custom-new-books-container">
+
+                            <!-- Tiêu đề dạng Tab bo góc chuẩn mẫu theo ảnh thực tế của bạn -->
+                            <div class="d-flex mb-3">
+                                <span class="px-3 py-1 text-white fw-bold custom-tab-title">
+                                    Sách mới
+                                </span>
+                            </div>
+
+                            <!-- Vùng chứa dải trượt sách phẳng sát khít nhau và tràn đều ra 2 bên biên viền -->
+                            <div
+                                class="d-flex align-items-center justify-content-center overflow-hidden position-relative books-track-wrapper">
+                               <div class="d-flex align-items-center books-track">
+
+    {% for book in new_books %}
+
+    <div class="text-center me-2">
+
+        <a href="{% url 'books' %}">
+
+            <img
+                src="{{ book.image.url }}"
+                alt="{{ book.name }}"
+                style="
+                    width:80px;
+                    height:110px;
+                    object-fit:cover;
+                    border-radius:5px;
+                ">
+
+        </a>
+
+        <small>{{ book.name }}</small>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container my-4 border border-1 container-inner-spacing"
+                    style="font-family: Arial, sans-serif;">
+                    <div class="row g-3">
+                        <!-- ========================================== CỘT 1: THƯ VIỆN CỦA TÔI ========================================== -->
+                        <div class="col-lg-3 col-md-12">
+                            <div class="p-3 bg-white border-main-box h-100">
+                                <h5 class="title-box mb-4 pb-2 border-bottom-title">Thư viện của tôi</h5>
+                                <ul class="list-unstyled list-navigation-menu">
+                                    <li><a href="#" class="d-flex align-items-center"><svg xmlns="http://w3.org"
+                                                viewBox="0 0 256 512" style="width: 14px; height: 14px;">
+                                                <path
+                                                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                            </svg>
+                                            Tài khoản thư viện</a>
+                                    </li>
+                                    <li><a href="#" class="d-flex align-items-center"><svg xmlns="http://w3.org"
+                                                viewBox="0 0 256 512" style="width: 14px; height: 14px;">
+                                                <path
+                                                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                            </svg> Cơ sở dữ liệu trực
+                                            tuyến</a></li>
+                                    <li><a href="#" class="d-flex align-items-center"><span class="arrow-icon"><svg
+                                                    xmlns="http://w3.org" viewBox="0 0 256 512"
+                                                    style="width: 14px; height: 14px;">
+                                                    <path
+                                                        d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                                </svg> Tài liệu nội sinh
+                                                ĐHQG-HCM</a></li>
+                                    <li><a href="#" class="d-flex align-items-center"><svg xmlns="http://w3.org"
+                                                viewBox="0 0 256 512" style="width: 14px; height: 14px;">
+                                                <path
+                                                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                            </svg> Đề nghị mua tài
+                                            liệu</a></li>
+                                    <li><a href="#" class="d-flex align-items-center"><svg xmlns="http://w3.org"
+                                                viewBox="0 0 256 512" style="width: 14px; height: 14px;">
+                                                <path
+                                                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+                                            </svg> Dịch vụ thư viện</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- ========================================== CỘT 2: SỬ DỤNG THƯ VIỆN ========================================== -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="p-3 bg-white border-main-box h-100 position-relative">
+                                <div class="d-flex mb-3">
+                                    <span class="px-3 py-1 text-white fw-bold custom-tab-title-sync">
+                                        Sử dụng thư viện
+                                    </span>
+                                </div>
+                                <div class="row g-3 text-center mt-2">
+                                    <div class="col-6">
+                                        <a href="#"
+                                            class="p-2 border rounded-3 service-card h-100 d-flex flex-column align-items-center justify-content-between">
+                                            <div class="img-service-wrapper">
+                                                <img src="{% static 'img/csdl-tt.jpg' %}" alt="CSDL"
+                                                    class="img-fluid object-fit-contain">
+                                            </div>
+                                            <span class="service-text-title mt-2">Truy cập CSDL trực tuyến</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#"
+                                            class="p-2 border rounded-3 service-card h-100 d-flex flex-column align-items-center justify-content-between">
+                                            <div class="img-service-wrapper">
+                                                <img src="{% static 'img/book.jpg' %}" alt="Mượn trả"
+                                                    class="img-fluid object-fit-contain">
+                                            </div>
+                                            <span class="service-text-title mt-2">Mượn trả tài liệu</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#"
+                                            class="p-2 border rounded-3 service-card h-100 d-flex flex-column align-items-center justify-content-between">
+                                            <div class="img-service-wrapper">
+                                                <img src="{% static 'img/training.jpg' %}" alt="Tập huấn"
+                                                    class="img-fluid object-fit-contain">
+                                            </div>
+                                            <span class="service-text-title mt-2">Tập huấn</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#"
+                                            class="p-2 border rounded-3 service-card h-100 d-flex flex-column align-items-center justify-content-between">
+                                            <div class="img-service-wrapper">
+                                                <img src="{% static 'img/reference.jpg' %}" alt="Cung cấp"
+                                                    class="img-fluid object-fit-contain">
+                                            </div>
+                                            <span class="service-text-title mt-2">Cung cấp thông tin theo yêu cầu</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ========================================== CỘT 3: TRỢ GIÚP ========================================== -->
+                        <div class="col-lg-3 col-md-12">
+                            <div class="p-3 bg-white border-main-box h-100 position-relative">
+                                <div class="d-flex mb-3">
+                                    <span class="px-3 py-1 text-white fw-bold custom-tab-title-sync">
+                                        Trợ giúp
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column gap-4 mt-4 ribbon-container-3d">
+                                    <div class="position-relative d-flex align-items-center ribbon-wrapper-3d">
+                                        <div class="ribbon-circle-img">
+                                            <img src="{% static 'img/help-1.png' %}" alt="Icon 1" class="img-fluid">
+                                        </div>
+                                        <div class="ribbon-body-3d">
+                                            <a href="#">Hướng dẫn sử dụng thư viện</a>
+                                        </div>
+                                    </div>
+                                    <div class="position-relative d-flex align-items-center ribbon-wrapper-3d">
+                                        <div class="ribbon-circle-img">
+                                            <img src="{% static 'img/help-2.png' %}" alt="Icon 2" class="img-fluid">
+                                        </div>
+                                        <div class="ribbon-body-3d">
+                                            <a href="#">Hỗ trợ học tập & nghiên cứu</a>
+                                        </div>
+                                    </div>
+                                    <div class="position-relative d-flex align-items-center ribbon-wrapper-3d">
+                                        <div class="ribbon-circle-img">
+                                            <img src="{% static 'img/help-3.jpg' %}" alt="Icon 3" class="img-fluid">
+                                        </div>
+                                        <div class="ribbon-body-3d">
+                                            <a href="#">Công cụ hỗ trợ</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- GIẢI PHÁP: Thay đổi class từ "row g-4 my-1" thành "row g-3 my-1" -->
+                    <div class="row g-3 my-1">
+
+                        <!-- ========================================== KHU VỰC BÊN TRÁI (CHIẾM 3/12 CỘT) ========================================== -->
+                        <div class="col-lg-3 col-md-4 mt-2">
+                            <!-- Đổi class từ sidebar-partner-container thành border-news-box để đồng bộ viền đỉnh xanh dương -->
+                            <div class="border-news-box h-100">
+                                <div class="news-container-box">
+
+                                    <!-- TIÊU ĐỀ KHỐI PHẲNG ĐỒNG BỘ VỚI CỘT TIN TỨC -->
+                                    <div
+                                        class="d-flex align-items-center justify-content-between mb-4 position-relative section-header-news">
+                                        <h5 class="fw-bold mb-0 text-dark pe-3 sidebar-partner-title-flat">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="#003d99"
+                                                width="16"
+                                                height="16"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                                                <path
+                                                    d="M0 64C0 28.7 28.7 0 64 0L213.5 0c17 0 33.3 6.7 45.3 18.7L365.3 125.3c12 12 18.7 28.3 18.7 45.3L384 448c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zm208-5.5l0 93.5c0 13.3 10.7 24 24 24L325.5 176 208 58.5zM120 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
+                                            </svg>
+                                            Cơ sở Dữ liệu trực tuyến
+                                        </h5>
+                                        <div class="flex-grow-1 dotted-line-separator"></div>
+                                    </div>
+
+                                    <a href="#" class="partner-square-item">
+                                        <img src="{% static 'img/nala-logo.jpg' %}" alt="NALA">
+                                    </a>
+
+
+                                    <a href="#" class="partner-square-item">
+                                        <img src="{% static 'img/lrc-ctu-logo.png' %}" alt="Trung tâm Học liệu">
+                                    </a>
+
+
+                                    <a href="#" class="partner-square-item">
+                                        <img src="{% static 'img/dhqg-logo.png' %}" alt="VNU-HCM">
+                                    </a>
+
+
+                                    <a href="#" class="partner-square-item">
+                                        <img src="{% static 'img/stinet-logo.png' %}" alt="STINET">
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- ========================================== KHU VỰC BÊN PHẢI: TIN TỨC - THÔNG BÁO (CHIẾM 9/12 CỘT) ========================================== -->
+                        <div class="col-lg-9 col-md-8 mt-2">
+                            <div class="border-news-box h-100">
+                                <div class="news-container-box">
+
+                                    <!-- TIÊU ĐỀ KHỐI VÀ DẢI CHẤM TRÒN PHÂN CÁCH NGANG -->
+                                    <div
+                                        class="d-flex align-items-center justify-content-between mb-4 position-relative section-header-news">
+                                        <h5 class="fw-bold mb-0 text-dark pe-3 news-title-text">Tin tức - Thông báo
+                                        </h5>
+                                        <div class="flex-grow-1 dotted-line-separator"></div>
+                                    </div>
+
+                                    <!-- DANH SÁCH CÁC BÀI VIẾT -->
+                                    <div class="d-flex flex-column gap-4 news-list-wrapper">
+                                        <!-- BÀI VIẾT 1 -->
+                                        <div
+                                            class="d-flex gap-3 align-items-start news-item-row pb-3 border-bottom border-light-subtle">
+                                            <div class="news-thumbnail-box flex-shrink-0 border">
+                                                <img src="{% static 'img/news-1.jpg' %}" alt="News 1"
+                                                    class="img-fluid object-fit-cover w-100 h-100">
+                                            </div>
+                                            <div class="news-content-box">
+                                                <h6 class="fw-bold mb-1"><a href="#"
+                                                        class="text-decoration-none article-link">THƯ VIỆN STU THAM
+                                                        DỰ HỘI NGHỊ THƯỜNG NIÊN AUNILO 2026 TẠI PHILIPPINES</a></h6>
+                                                <p class="publish-date-text text-muted mb-1">Ngày xuất bản:
+                                                    27-05-2026</p>
+                                                <p class="short-desc-text text-secondary mb-0">Hội nghị thường niên
+                                                    lần thứ 21 của Mạng lưới Thư viện Đại học ASEAN (AUNILO)...</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- BÀI VIẾT 2 -->
+                                        <div
+                                            class="d-flex gap-3 align-items-start news-item-row pb-3 border-bottom border-light-subtle">
+                                            <div class="news-thumbnail-box flex-shrink-0 border">
+                                                <img src="{% static 'img/news-2.jpg' %}" alt="News 1"
+                                                    class="img-fluid object-fit-cover w-100 h-100">
+                                            </div>
+                                            <div class="news-content-box">
+                                                <h6 class="fw-bold mb-1"><a href="#"
+                                                        class="text-decoration-none article-link">THÔNG BÁO VỀ VIỆC
+                                                        MỜI CUNG CẤP BÁO GIÁ LÀM CƠ SỞ THẨM ĐỊNH GIÁ ĐỐI VỚI THANH
+                                                        LÝ TÀI SẢN CÔNG THUỘC PHẦN TÀI SẢN BỊ DỠ BỎ TRONG QUÁ TRÌNH
+                                                        CẢI TẠO THƯ VIỆN STU</a></h6>
+                                                <p class="publish-date-text text-muted mb-1">Ngày xuất bản:
+                                                    26-05-2026</p>
+                                                <p class="short-desc-text text-secondary mb-0">Trong quá trình triển
+                                                    khai thi công cải tạo, nâng cấp tòa nhà Thư viện Trung tâm...
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- BÀI VIẾT 3 -->
+                                        <div
+                                            class="d-flex gap-3 align-items-start news-item-row pb-3 border-bottom border-light-subtle">
+                                            <div class="news-thumbnail-box flex-shrink-0 border">
+                                                <img src="{% static 'img/news-3.jpg' %}" alt="News 3"
+                                                    class="img-fluid object-fit-cover w-100 h-100">
+                                            </div>
+                                            <div class="news-content-box">
+                                                <h6 class="fw-bold mb-1"><a href="#"
+                                                        class="text-decoration-none article-link">THƯ VIỆN STU THƯ
+                                                        VIỆN QUỐC HỘI MỸ TIẾP TỤC KÝ KẾT HỢP TÁC BỔ SUNG TÀI
+                                                        LIỆU</a></h6>
+                                                <p class="publish-date-text text-muted mb-1">Ngày xuất bản:
+                                                    14-05-2026</p>
+                                                <p class="short-desc-text text-secondary mb-0">Chiều ngày 11/5/2026,
+                                                    Thư viện Trung tâm ĐHQG-HCM đã đón tiếp bà Libreny...</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- BÀI VIẾT 4 -->
+                                        <div
+                                            class="d-flex gap-3 align-items-start news-item-row pb-3 border-bottom border-light-subtle">
+                                            <div class="news-thumbnail-box flex-shrink-0 border">
+                                                <img src="{% static 'img/news-4.jpg' %}" alt="News 4"
+                                                    class="img-fluid object-fit-cover w-100 h-100">
+                                            </div>
+                                            <div class="news-content-box">
+                                                <h6 class="fw-bold mb-1"><a href="#"
+                                                        class="text-decoration-none article-link">TẬP HUẤN KHAI THÁC
+                                                        CƠ SỞ DỮ LIỆU SCOPUS</a></h6>
+                                                <p class="publish-date-text text-muted mb-1">Ngày xuất bản:
+                                                    13-05-2026</p>
+                                                <p class="short-desc-text text-secondary mb-0">Nhằm hỗ trợ người
+                                                    học, giảng viên và nhà nghiên cứu nâng cao kỹ năng tìm kiếm,
+                                                    khai...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- THAY THẾ TOÀN BỘ ĐOẠN SCRIPT QUÈT QR Ở CUỐI INDEX.HTML THÀNH KHỐI NÀY -->
+<script>
+let html5QrcodeScanner = null;
+
+function startQRScanner() {
+    // 1. Hiển thị vùng chứa camera
+    const container = document.getElementById('qr-reader-container');
+    container.classList.remove('d-none');
+
+    // 2. Khởi tạo trình quét với cấu hình khung quét (qrbox) chuẩn xác
+    html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader",
+        {
+            fps: 15,          // Tăng tốc độ bắt hình ảnh lên 15 khung hình/giây
+            qrbox: { width: 250, height: 250 }, // Bắt buộc dựng khung ô vuông lấy nét 250x250px
+            aspectRatio: 1.0  // Đưa tỉ lệ camera về hình vuông dễ quét
+        },
+        /* verbose= */ false
+    );
+
+    // 3. Hàm xử lý khi quét trúng mã thành công
+    function onScanSuccess(decodedText, decodedResult) {
+        // Tắt camera ngay lập tức để tránh quét lặp lại
+        stopQRScanner();
+        // Chuyển hướng trình duyệt đến link chứa trong mã QR
+        window.location.href = decodedText;
+    }
+
+    // 4. Hàm xử lý khi lỗi (không cần thông báo liên tục vì camera quét từng miligiây)
+    function onScanFailure(error) {
+        // Cứ để im cho camera tiếp tục quét tìm mã
+    }
+
+    // 5. Kích hoạt camera
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+}
+
+function stopQRScanner() {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().then(() => {
+            document.getElementById('qr-reader-container').classList.add('d-none');
+            html5QrcodeScanner = null;
+        }).catch(err => {
+            console.error("Lỗi đóng camera:", err);
+            document.getElementById('qr-reader-container').classList.add('d-none');
+            html5QrcodeScanner = null;
+        });
+    } else {
+        document.getElementById('qr-reader-container').classList.add('d-none');
+    }
+}
+</script>
+
+{% endblock %}

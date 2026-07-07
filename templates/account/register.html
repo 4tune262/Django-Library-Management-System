@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header text-center text-white py-3"
+                     style="background:#003d99;">
+
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        ĐĂNG KÝ TÀI KHOẢN
+                    </h3>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Tên đăng nhập
+                                </label>
+
+                                {{ form.username }}
+
+                                <small class="text-danger">
+                                    {{ form.username.errors }}
+                                </small>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Email
+                                </label>
+
+                                {{ form.email }}
+
+                                <small class="text-danger">
+                                    {{ form.email.errors }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Họ
+                                </label>
+
+                                {{ form.last_name }}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Tên
+                                </label>
+
+                                {{ form.first_name }}
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Mật khẩu
+                                </label>
+
+                                {{ form.password1 }}
+
+                                <small class="text-danger">
+                                    {{ form.password1.errors }}
+                                </small>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label fw-bold">
+                                    Nhập lại mật khẩu
+                                </label>
+
+                                {{ form.password2 }}
+
+                                <small class="text-danger">
+                                    {{ form.password2.errors }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-grid mt-4">
+
+                            <button class="btn btn-primary btn-lg">
+
+                                <i class="fas fa-user-check me-2"></i>
+
+                                Đăng ký
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="card-footer text-center">
+
+                    Đã có tài khoản?
+
+                    <a href="{% url 'login' %}"
+                       class="text-decoration-none fw-bold">
+
+                        Đăng nhập ngay
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+<link rel="stylesheet" href="{% static 'game/css/game.css' %}">
+
+<div class="game-bg">
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="min-height:100vh;">
+            <div class="col-lg-8">
+                <div class="game-main text-center p-5 rounded-4">
+
+                    {% if is_final %}
+                        <img src="{% static 'game/img/anime.png' %}" id="anime" style="width:260px; filter:drop-shadow(0 0 25px #00ffff);">
+
+                        <h1 class="text-info mt-4 animate-glow">🏆 ARENA COMPLETED!</h1>
+                        <h2 class="text-white mt-2">Tổng điểm đạt được: <span class="text-warning">{{ score_earned }}</span></h2>
+                        <p class="text-white-50">Bạn đã hoàn thành xuất sắc các thử thách C++ từ Easy đến Hard!</p>
+
+                        {% if voucher %}
+                            <div class="mt-4 p-4 rounded-3 text-start" style="background: rgba(255, 207, 51, 0.1); border: 1px dashed #ffcf33;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span style="font-size: 30px;">🎁</span>
+                                    <div>
+                                        <h5 class="text-warning mb-1 fw-bold">PHẦN THƯỞNG CHIẾN THẮNG</h5>
+                                        <p class="text-white mb-2" style="font-size: 13px;">Chúc mừng bạn nhận được Voucher giảm giá 10% khi mua các cuốn <b>Sách Lập Trình</b> tại thư viện STU!</p>
+                                        <div class="d-flex gap-2">
+                                            <span class="bg-white text-dark px-3 py-1 fw-bold rounded border" id="voucherCode" style="letter-spacing: 1px;">{{ voucher.code }}</span>
+                                            <button class="btn btn-sm btn-warning" onclick="copyVoucher()">Sao chép</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="mt-5">
+                            <a href="{% url 'game_home' %}" class="btn-play">◀ QUAY LẠI SẢNH</a>
+                        </div>
+
+                    {% else %}
+                        {% if is_correct %}
+                            <img src="{% static 'game/img/yes.png' %}" id="anime" class="correct" style="width:260px; filter:drop-shadow(0 0 25px #22c55e);">
+                            <h1 class="text-success mt-4">🎉 CHÍNH XÁC !!</h1>
+                            <h2 class="text-white">+10 Score</h2>
+                            <p class="text-white-50">Kỹ năng C++ của bạn rất tốt, hãy giữ vững phong độ.</p>
+                        {% else %}
+                            <img src="{% static 'game/img/no.png' %}" id="anime" class="wrong" style="width:260px; filter:drop-shadow(0 0 25px #ef4444);">
+                            <h1 class="text-danger mt-4">❌ SAI MẤT RỒI</h1>
+                            <p class="text-warning mt-3">Đáp án đúng của câu này là: <b class="text-white bg-dark px-3 py-1 rounded border border-warning" style="font-family: monospace;">{{ correct_answer }}</b></p>
+                        {% endif %}
+
+                        <div class="mt-5">
+                            {% if is_route_level %}
+                                <a href="{% url 'play_game' next_level %}" class="btn-play" style="background: linear-gradient(45deg, #ff007f, #7f00ff);">TIẾN VÀO MÀN {{ next_level.upper }} ▶</a>
+                            {% else %}
+                                {% if next_level == 'result' %}
+                                    <a href="{% url 'game_result' %}" class="btn-play" style="background: linear-gradient(45deg, #00f2fe, #4facfe);">XEM KẾT QUẢ CUỐI CÙNG 🏆</a>
+                                {% else %}
+                                    <a href="{% url 'play_game' next_level %}" class="btn-play">CÂU TIẾP THEO ▶</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'game/js/game.js' %}"></script>
+
+<script>
+function copyVoucher() {
+    var copyText = document.getElementById("voucherCode").innerText;
+    navigator.clipboard.writeText(copyText);
+    alert("Đã sao chép mã voucher: " + copyText);
+}
+</script>
+{% endblock %}
